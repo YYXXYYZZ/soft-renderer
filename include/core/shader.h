@@ -1,29 +1,29 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include <string>
-#include <map>
-
-#include <boost/any.hpp>
-
-using std::string;
-using std::map;
-using boost::any;
-
 class Shader
 {
 public:
     Shader();
     virtual ~Shader();
 
-    virtual void initialize() = 0;
-    virtual void execute() = 0;
+    // initialize will init all necessary memory and uniform variable
+    // iterationTimes will return how many times iterationCompute will
+    // calld. iterationCompute should be called paralleled which will
+    // simulate main function in shader.
+    void execute();
 
-    void setInputData(const string &, const any &);
-    any getInputData(const string&);
+    bool getReinitialize() const;
+    void setReinitialize(bool value);
+
+protected:
+    virtual void initialize() = 0;
+    virtual int iterationTimes() = 0;
+    virtual void iterationCompute(int step) = 0;
 
 private:
-    map<string,any> m_inputData;
+    bool reinitialize;
+
 };
 
 #endif // SHADER_H

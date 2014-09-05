@@ -1,8 +1,6 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 
-#include "core/warehouse.h"
-
 using namespace std;
 
 int main()

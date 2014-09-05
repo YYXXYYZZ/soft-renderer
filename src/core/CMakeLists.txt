@@ -4,8 +4,10 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/src/core)
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 set(SRC
-    ${SRCROOT}/warehouse.cpp
-    ${INCROOT}/warehouse.h
+    ${SRCROOT}/shader.cpp
+    ${INCROOT}/shader.h
+    ${SRCROOT}/vertexshader.cpp
+    ${INCROOT}/vertexshader.h
 )
 SET(BUILD_SHARED_LIBS ON)
 source_group("" FILES ${SRC})

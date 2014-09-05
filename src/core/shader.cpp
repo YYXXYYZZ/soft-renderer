@@ -1,27 +1,37 @@
 #include <iostream>
 
-#include "shader.h"
+#include "core/shader.h"
 
 Shader::Shader()
+    :reinitialize(true)
 {
 }
 
 Shader::~Shader()
 {
 
-
 }
 
-void Shader::setInputData(const std::string &key, const boost::any &value)
+void Shader::execute()
 {
-    m_inputData.insert(std::pair<string,any>(key,value));
-}
-
-boost::any Shader::getInputData(const std::string & key)
-{
-    boost::any value = m_inputData[key];
-    if(value.empty()){
-        std::cerr << "Warning: try to index a none exist key" <<key << std::endl;
+    if(getReinitialize()){
+        initialize();
+        reinitialize = false;
     }
-    return value;
+    int times = iterationTimes();
+    // TODO parallel!
+    for (int step = 0; step < times; ++step) {
+        iterationCompute(step);
+    }
 }
+
+bool Shader::getReinitialize() const
+{
+    return reinitialize;
+}
+
+void Shader::setReinitialize(bool value)
+{
+    reinitialize = value;
+}
+

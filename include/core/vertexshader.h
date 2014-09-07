@@ -2,6 +2,8 @@
 #define VERTEXSHADER_H
 
 #include "core/shader.h"
+#include <glm/gtc/matrix_transform.hpp>
+
 class VertexShader : public Shader
 {
 public:
@@ -15,6 +17,10 @@ protected:
 
 private:
 
+    int w = 800;
+    int h = 600;
+
+    glm::mat4 MVP;
 };
 
 #endif // VERTEXSHADER_H

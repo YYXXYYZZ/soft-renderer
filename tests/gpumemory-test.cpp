@@ -1,21 +1,32 @@
 #include <iostream>
-#include <core/global.h>
+#include <core/gpumemory.h>
+#include <cassert>
 
 using namespace std;
 
 int main()
 {
-    extern GPUMemory GlobalGPUMemory;
-    GlobalGPUMemory.alloc("_int_",1000,Int);
-    GlobalGPUMemory.alloc("_int_",1000,Int);
-    GlobalGPUMemory.dealloc("_wwwwwwwwww_");
-//    GlobalGPUMemory.dealloc("_int_");
 
-    MemoryInfo info;
-    bool success;
-    success = GlobalGPUMemory.retrieve("_int_",info);
-    cout<<success <<endl;
+    int positions[] =
+    {
+        -1,-1,0,
+        1,1,0,
+        -1,1,0
+    };
 
+    int *a;
+    GPUMemory::alloc<int>("int",9,a);
+    GPUMemory::memoryCopy<int>("int",9,positions);
+
+    int *data;
+    int size;
+    if (GPUMemory::retrieve<int>("int",size,data)) {
+        for (int var = 0; var < size; ++var) {
+            cout << data[var] << endl;
+        }
+    }
+
+    GPUMemory::dealloc<int>("int");
 
     return 0;
 }

@@ -4,6 +4,12 @@
 #include "core/shader.h"
 #include <glm/gtc/matrix_transform.hpp>
 
+template<class T>
+struct data_info{
+    T *data;
+    int size;
+};
+
 class VertexShader : public Shader
 {
 public:
@@ -14,13 +20,15 @@ protected:
     void initialize();
     void iterationCompute(int step);
     int iterationTimes();
-
 private:
 
     int w = 800;
     int h = 600;
 
     glm::mat4 MVP;
+    data_info<int> _positions;
+    data_info<float> _color;
+    data_info<float> _out;
 };
 
 #endif // VERTEXSHADER_H

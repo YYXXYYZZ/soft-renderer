@@ -11,6 +11,8 @@ set(SRC
     ${INCROOT}/vertexshader.h
     ${SRCROOT}/gpumemory.cpp
     ${INCROOT}/gpumemory.h
+    ${SRCROOT}/pipeline.cpp
+    ${INCROOT}/pipeline.h
 )
 SET(BUILD_SHARED_LIBS ON)
 source_group("" FILES ${SRC})

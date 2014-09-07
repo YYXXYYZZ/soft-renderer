@@ -13,6 +13,8 @@ set(SRC
     ${INCROOT}/gpumemory.h
     ${SRCROOT}/pipeline.cpp
     ${INCROOT}/pipeline.h
+    ${SRCROOT}/clipper.cpp
+    ${INCROOT}/clipper.h
 )
 SET(BUILD_SHARED_LIBS ON)
 source_group("" FILES ${SRC})

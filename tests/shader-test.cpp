@@ -15,7 +15,7 @@ int main()
 
     float *data;
     int size;
-    if (GPUMemory::retrieve<float>("out",size,data)) {
+    if (GPUMemory::retrieve<float>("gl_position",size,data)) {
         for (int var = 0; var < size; ++var) {
             cout << data[var] << endl;
         }

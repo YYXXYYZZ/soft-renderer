@@ -24,7 +24,7 @@ void VertexShader::initialize()
 
     GPUMemory::alloc<int>("positions",9,_positions.data);
     GPUMemory::alloc<float>("color",9,_color.data);
-    GPUMemory::alloc<float>("out",9,_out.data);
+    GPUMemory::alloc<float>("gl_position",12,_out.data);
 
     GPUMemory::memoryCopy<int>("positions",9,positions);
     GPUMemory::memoryCopy<float>("color",9,color);
@@ -48,9 +48,10 @@ void VertexShader::iterationCompute(int step)
                   1);
 
     pos = MVP * pos;
-    _out.data[step*3] = pos[0];
-    _out.data[step*3+1] = pos[1];
-    _out.data[step*3+2] = pos[2];
+    _out.data[step*4] = pos[0];
+    _out.data[step*4+1] = pos[1];
+    _out.data[step*4+2] = pos[2];
+    _out.data[step*4+3] = pos[3];
 }
 
 int VertexShader::iterationTimes()

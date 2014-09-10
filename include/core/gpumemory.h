@@ -90,7 +90,7 @@ bool retrieve(const std::string &name,int &size,T *&out_data)
     try{
         MemoryInfo mem_info = Global_Data.at(name);
         if(mem_info.type != typeid(T).name()){
-            std::cerr << "Warning: memory copy to a different type! " << name << std::endl;
+            std::cerr << "Warning: retrieve to a different type! " << name << std::endl;
             out_data = NULL;
             return false;
         }

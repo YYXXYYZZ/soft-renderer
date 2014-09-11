@@ -2,6 +2,8 @@
 #define SUTHERLANDHODGMANCLIPPER_H
 
 #include "clipper.h"
+#include <vector>
+using std::vector;
 
 class SutherlandHodgmanClipper : public Clipper
 {
@@ -18,12 +20,10 @@ public:
     void Sutherland_Hodgman();
 
 private:
-    void clipPoint(glm::vec4 p, Boundary winEdge,
-                   glm::vec4 *pOut, int *cnt,
-                   glm::vec4 *first[],
-                   glm::vec4 *s);
-    bool cross(glm::vec4 p1,glm::vec4 p2,Boundary winEdge);
+    void fillData(vector<glm::vec4> &input);
+    void clip(vector<glm::vec4>&input, vector<glm::vec4>&output, Boundary b);
     bool inside(glm::vec4 p1,Boundary b);
+    glm::vec4 intersect(glm::vec4 p1, glm::vec4 p2, Boundary b);
 
 };
 

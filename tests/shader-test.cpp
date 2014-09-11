@@ -31,5 +31,19 @@ int main()
     delete vs;
     delete cp;
 
+//    glm::vec4 a(0.0f,0.0f,0.0f,1.0f);
+//    glm::mat4 projection = glm::perspective(60.0f, (float)800/600, 0.3f, 100.0f);
+//    glm::mat4 view = glm::lookAt(glm::vec3(0.0f,0.0f,-1.0f),
+//                                 glm::vec3(0.0f,0.0f,0.0f),
+//                                 glm::vec3(0.0f,1.0f,0.0f));
+//    glm::mat4 MVP = projection*view;
+//    a= MVP *a;
+//    cout << "staring \n";
+//    cout << a[0]<< endl;
+//    cout << a[1]<< endl;
+//    cout << a[2]<< endl;
+//    cout << a[3]<< endl;
+
+
     return 0;
 }

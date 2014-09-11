@@ -11,3 +11,6 @@ target_link_libraries(shader-test sf-core)
 
 add_executable(gpumemory-test gpumemory-test.cpp)
 target_link_libraries(gpumemory-test sf-core)
+
+add_executable(clipper-test clipper-test.cpp)
+target_link_libraries(clipper-test sf-core)

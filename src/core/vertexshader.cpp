@@ -1,5 +1,6 @@
 #include "core/vertexshader.h"
 #include "core/gpumemory.h"
+#include "core/constant.h"
 
 VertexShader::VertexShader()
 {
@@ -24,7 +25,7 @@ void VertexShader::initialize()
 
     GPUMemory::alloc<int>("positions",9,_positions.data);
     GPUMemory::alloc<float>("color",9,_color.data);
-    GPUMemory::alloc<glm::vec4>("gl_position",3,_out.data);
+    GPUMemory::alloc<glm::vec4>(Constant::SF_POSITION,3,_out.data);
 
     GPUMemory::memoryCopy<int>("positions",9,positions);
     GPUMemory::memoryCopy<float>("color",9,color);

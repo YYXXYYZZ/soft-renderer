@@ -4,6 +4,8 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/src/core)
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 set(SRC
+    ${INCROOT}/primitive.h
+    ${SRCROOT}/primitive.cpp
     ${INCROOT}/culler.h
     ${SRCROOT}/culler.cpp
     ${INCROOT}/global.h
@@ -19,6 +21,7 @@ set(SRC
     ${INCROOT}/clipper.h
     ${SRCROOT}/sutherlandhodgmanclipper.cpp
     ${INCROOT}/sutherlandhodgmanclipper.h
+    ${INCROOT}/constant.h
 )
 SET(BUILD_SHARED_LIBS ON)
 source_group("" FILES ${SRC})

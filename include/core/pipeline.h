@@ -3,20 +3,43 @@
 
 #include "vertexshader.h"
 #include "clipper.h"
+#include "primitive.h"
 
-class PipeLine
+
+enum ClipperType{
+    SutherlandHodgman,
+    WeilerAtherton
+};
+
+struct PipelineConfiguration{
+    PrimitiveType primitive;
+    ClipperType clipper;
+};
+
+class Pipeline
 {
 public:
-    PipeLine();
+    Pipeline();
+
+    PipelineConfiguration getConfiguration() const;
+    void setConfiguration(const PipelineConfiguration &value);
 
     void attachVertexShader(VertexShader *vertShader);
+
+
+
+
     void attachClipper(Clipper *clipper);
 
-    void execute();
+    void render();
+
+
 
 private:
+    PipelineConfiguration configuration;
     VertexShader *vertShader;
     Clipper *clipper;
+    Primitive primitive;
 };
 
 #endif // PIPELINE_H

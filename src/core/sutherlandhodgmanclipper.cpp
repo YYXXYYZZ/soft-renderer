@@ -34,8 +34,8 @@ void SutherlandHodgmanClipper::Sutherland_Hodgman()
     }
 
     glm::vec4 *data;
-    GPUMemory::alloc<glm::vec4>("clip_output",input->size(),data);
-    GPUMemory::memoryCopy<glm::vec4>("clip_output",input->size(),input->data());
+    GPUMemory::alloc<glm::vec4>("sf_clip_output",input->size(),data);
+    GPUMemory::memoryCopy<glm::vec4>("sf_clip_output",input->size(),input->data());
 
     delete input;
     delete output;
@@ -44,7 +44,9 @@ void SutherlandHodgmanClipper::Sutherland_Hodgman()
 void SutherlandHodgmanClipper::fillData(vector<glm::vec4> &input)
 {
     for (int i = 0; i < size; ++i) {
-        input.push_back(position[i]);
+        input.push_back(triangle[i].p1);
+        input.push_back(triangle[i].p2);
+        input.push_back(triangle[i].p3);
     }
 }
 

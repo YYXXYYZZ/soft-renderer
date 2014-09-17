@@ -1,8 +1,7 @@
 #ifndef CLIPPER_H
 #define CLIPPER_H
 
-#include <glm/glm.hpp>
-
+#include <core/primitive.h>
 class Clipper
 {
 public:
@@ -20,7 +19,7 @@ public:
     // void Weiler_Atherton();
 
 protected:
-    glm::vec4 *position;
+    Triangle *triangle;
     bool canClip;
     int size;
 };

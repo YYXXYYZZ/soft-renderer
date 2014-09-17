@@ -1,5 +1,6 @@
 #include <core/clipper.h>
 #include <core/gpumemory.h>
+#include <core/constant.h>
 
 Clipper::Clipper()
     :canClip(false)
@@ -8,7 +9,7 @@ Clipper::Clipper()
 
 void Clipper::initialize()
 {
-    if  (!GPUMemory::retrieve<glm::vec4>("gl_position",size,position)) {
+    if  (!GPUMemory::retrieve<Triangle>(Constant::SF_PRIMITIVESETUPOUT,size,triangle)) {
         return;
     }
     canClip = true;
@@ -17,7 +18,6 @@ void Clipper::initialize()
 void Clipper::execute()
 {
     initialize();
-
 }
 
 

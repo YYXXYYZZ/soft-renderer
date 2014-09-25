@@ -20,8 +20,8 @@ public:
 
 protected:
     Triangle *triangle;
+    int primitiveCount;
     bool canClip;
-    int size;
 };
 
 #endif // CLIPPER_H

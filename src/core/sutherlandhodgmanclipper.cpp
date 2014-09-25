@@ -18,40 +18,60 @@ void SutherlandHodgmanClipper::Sutherland_Hodgman()
     if(!canClip)
         return;
 
-    vector<glm::vec4> *input = new vector<glm::vec4>;
-    vector<glm::vec4> *output = new vector<glm::vec4>;
-    fillData(*input);
+    vector<Triangle> outPrimitive;
+    // TODO
+    // clip each primitive
+    for (int i = 0; i < primitiveCount; ++i) {
 
-    for (int b = Left; b <= Far; ++b) {
-        clip(*input,*output,static_cast<Boundary>(b));
-        swap(input,output);
-        output->clear();
+        list<vec4> *input = new list<vec4>;
+        list<vec4> *output = new list<vec4>;
+
+        input->push_back(triangle[i].p1);
+        input->push_back(triangle[i].p2);
+        input->push_back(triangle[i].p3);
+
+        for (int b = Left; b <= Far; ++b) {
+            clip(*input,*output,static_cast<Boundary>(b));
+            swap(input,output);
+            output->clear();
+        }
+
+        if (input->size()>3) {
+            polygonToTriangle(*input,outPrimitive);
+        }
+
+        if (input->size()==3) {
+            Triangle tri;
+            tri.p1 = input->front();
+            input->pop_front();
+            tri.p2 = input->front();
+            input->pop_front();
+            tri.p3 = input->front();
+            outPrimitive.push_back(tri);
+        }
+        // size less than 3?
+        // impossiable, skip
+        delete input;
+        delete output;
     }
+    Triangle *data;
+    GPUMemory::alloc<Triangle>(Constant::SF_CLIPOUT,outPrimitive.size(),data);
+    GPUMemory::memoryCopy<Triangle>(Constant::SF_CLIPOUT,outPrimitive.size(),&outPrimitive[0]);
 
-    glm::vec4 *data;
-    GPUMemory::alloc<glm::vec4>(Constant::SF_CLIPOUT,input->size(),data);
-    GPUMemory::memoryCopy<glm::vec4>(Constant::SF_CLIPOUT,input->size(),input->data());
-
-    delete input;
-    delete output;
 }
 
-void SutherlandHodgmanClipper::fillData(vector<glm::vec4> &input)
-{
-    for (int i = 0; i < size; ++i) {
-        input.push_back(triangle[i].p1);
-        input.push_back(triangle[i].p2);
-        input.push_back(triangle[i].p3);
-    }
-}
 
-void SutherlandHodgmanClipper::clip(vector<glm::vec4> &input,
-                                    vector<glm::vec4> &output,
+void SutherlandHodgmanClipper::clip(list<vec4> &input,
+                                    list<vec4> &output,
                                     Boundary b)
 {
-    for (int i = 0; i < input.size(); ++i) {
-        glm::vec4 begin = input[i];
-        glm::vec4 end = input[(i+1)%input.size()];
+    for (list<vec4>::iterator iter = input.begin(); iter != input.end(); ++iter) {
+        vec4 begin = *iter;
+        list<vec4>::iterator iter_end = iter;
+        iter_end++;
+        if (iter_end == input.end())
+            iter_end = input.begin();
+        vec4 end = *iter_end;
 
         // both inside, put end to output
         if (inside(begin,b) && inside(end,b))
@@ -60,7 +80,7 @@ void SutherlandHodgmanClipper::clip(vector<glm::vec4> &input,
         // begin outside, end inside
         // put end and intersect to output
         if ( !inside(begin,b) && inside(end,b)){
-            glm::vec4 iPoint = intersect(begin,end,b);
+            vec4 iPoint = intersect(begin,end,b);
             // intersect point may same as begin or end point,
             // if does, skip
             if (iPoint!=begin && iPoint!=end)
@@ -71,7 +91,7 @@ void SutherlandHodgmanClipper::clip(vector<glm::vec4> &input,
         // begin inside, end outside
         // put intersect to output
         if (inside(begin,b) && !inside(end,b)) {
-            glm::vec4 iPoint = intersect(begin,end,b);
+            vec4 iPoint = intersect(begin,end,b);
             // intersect point may same as begin or end point,
             // if does, skip
             if (iPoint!=begin && iPoint!=end)
@@ -80,7 +100,7 @@ void SutherlandHodgmanClipper::clip(vector<glm::vec4> &input,
     }
 }
 
-bool SutherlandHodgmanClipper::inside(glm::vec4 p1, Boundary b)
+bool SutherlandHodgmanClipper::inside(vec4 p1, Boundary b)
 {
     switch (b) {
     case Left:
@@ -114,9 +134,9 @@ bool SutherlandHodgmanClipper::inside(glm::vec4 p1, Boundary b)
     return true;
 }
 
-glm::vec4 SutherlandHodgmanClipper::intersect(glm::vec4 p1,glm::vec4 p2, Boundary b)
+vec4 SutherlandHodgmanClipper::intersect(vec4 p1,vec4 p2, Boundary b)
 {
-    glm::vec4 result;
+    vec4 result;
 
     float u;
     switch (b) {
@@ -173,3 +193,64 @@ glm::vec4 SutherlandHodgmanClipper::intersect(glm::vec4 p1,glm::vec4 p2, Boundar
     }
     return result;
 }
+
+void SutherlandHodgmanClipper::polygonToTriangle(list<vec4> polygon,
+                                                 vector<Triangle> &out)
+{
+    // find the most left point
+    float min_x = polygon.front().x;
+    list<vec4>::iterator middle;
+    list<vec4>::iterator left;
+    list<vec4>::iterator right;
+    for (list<vec4>::iterator iter = polygon.begin(); iter != polygon.end(); ++iter) {
+       if (iter->x < min_x){
+           min_x = iter->x;
+           middle = iter;
+       }
+    }
+    // find left
+    left = middle;
+    if (left==polygon.begin()) {
+        left = polygon.end();
+    }
+    left--;
+
+    // find right
+    right = middle;
+    right++;
+    if (right==polygon.end()) {
+        right = polygon.begin();
+    }
+
+    // target triangle
+    Triangle tri;
+    tri.p1 = *left;
+    tri.p2 = *middle;
+    tri.p3 = *right;
+
+    out.push_back(tri);
+
+    // check other point inside
+//    for (int i = 0; i < total; ++i) {
+//        tri.inside();
+        ;
+//    }
+
+    // no, delete index point and continue
+
+
+    // yes, spilt to two polygon
+
+}
+
+
+
+
+
+
+
+
+
+
+
+

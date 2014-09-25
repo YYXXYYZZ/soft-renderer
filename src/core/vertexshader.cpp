@@ -13,7 +13,10 @@ void VertexShader::initialize()
     {
         -0.5,-0.5,0,
         0.5,0.5,0,
-        -0.5,0.5,0
+        -0.5,0.5,0,
+        -0.5,-0.5,0,
+        0.5,0.5,0,
+        0.5,-0.5,0
     };
 
     float color[] =
@@ -23,11 +26,11 @@ void VertexShader::initialize()
         0.1f,0.4f,0.3f
     };
 
-    GPUMemory::alloc<float>("positions",9,_positions.data);
+    GPUMemory::alloc<float>("positions",2*9,_positions.data);
     GPUMemory::alloc<float>("color",9,_color.data);
-    GPUMemory::alloc<glm::vec4>(Constant::SF_POSITION,3,_out.data);
+    GPUMemory::alloc<glm::vec4>(Constant::SF_POSITION,6,_out.data);
 
-    GPUMemory::memoryCopy<float>("positions",9,positions);
+    GPUMemory::memoryCopy<float>("positions",2*9,positions);
     GPUMemory::memoryCopy<float>("color",9,color);
 
     glm::mat4 model = glm::mat4(1.0f);
@@ -54,5 +57,5 @@ void VertexShader::iterationCompute(int step)
 
 int VertexShader::iterationTimes()
 {
-    return 3;
+    return 6;
 }

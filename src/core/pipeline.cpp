@@ -29,11 +29,14 @@ void Pipeline::render()
     }
     vertShader->execute();
 
-    primitive.setup(TRIANGLES,3);
+    //TODO fix me :6
+    primitive.setup(TRIANGLES,6);
+
     if (!clipper) {
         std::cerr << "Warning: null clipper! "<<std::endl;
         return;
     }
+
     clipper->execute();
 
     viewPortTransform();
@@ -48,8 +51,8 @@ void Pipeline::clear()
 void Pipeline::viewPortTransform()
 {
     int size;
-    glm::vec4 *data;
-    if (!GPUMemory::retrieve<glm::vec4>(Constant::SF_CLIPOUT,size,data))
+    Triangle *data;
+    if (!GPUMemory::retrieve<Triangle>(Constant::SF_CLIPOUT,size,data))
         return;
     int width = 800;
     int height = 600;
@@ -59,16 +62,22 @@ void Pipeline::viewPortTransform()
     float near = 1.0f;
 
     for (int i = 0; i < size; ++i) {
-        // perspective divide
-        data[i].x = data[i].x / data[i].w;
-        data[i].y = data[i].y / data[i].w;
-        data[i].z = data[i].z / data[i].w;
+        // for each triangle
+        Triangle &tri = data[i];
+        for (int var = 0; var < 3; ++var) {
+            glm::vec4 &vert = *(&tri.p1+var);
 
-        // viewport transform
-        data[i].x = width/2*data[i].x + x + width/2;
-        data[i].y = height/2*data[i].y + y + height/2;
-        data[i].z = (far-near)/2*data[i].z + (far + near)/2;
-        data[i].w = 1.0f;
+            // perspective divide
+            vert.x = vert.x / vert.w;
+            vert.y = vert.y / vert.w;
+            vert.z = vert.z / vert.w;
+
+            // viewport transform
+            vert.x = width/2*vert.x + x + width/2;
+            vert.y = height/2*vert.y + y + height/2;
+            vert.z = (far-near)/2*vert.z + (far + near)/2;
+            vert.w = 1.0f;
+        }
     }
 }
 PipelineConfiguration Pipeline::getConfiguration() const

@@ -9,7 +9,7 @@ Clipper::Clipper()
 
 void Clipper::initialize()
 {
-    if  (!GPUMemory::retrieve<Triangle>(Constant::SF_PRIMITIVESETUPOUT,size,triangle)) {
+    if  (!GPUMemory::retrieve<Triangle>(Constant::SF_PRIMITIVESETUPOUT,primitiveCount,triangle)) {
         return;
     }
     canClip = true;

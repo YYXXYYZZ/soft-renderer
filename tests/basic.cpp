@@ -24,16 +24,32 @@ int main()
     pl.attachVertexShader(vs);
     pl.render();
 
+//    int size;
+//    glm::vec4 *data;
+//    GPUMemory::retrieve<glm::vec4>(Constant::SF_CLIPOUT,size,data);
+
+
+//    vector<sf::Vertex> verteices;
+//    for (int i = 0; i < size; ++i) {
+//        sf::Vertex vertex(sf::Vector2f(data[i].x,data[i].y));
+//        vertex.color =  sf::Color::Red;
+//        verteices.push_back(vertex);
+//    }
     int size;
-    glm::vec4 *data;
-    GPUMemory::retrieve<glm::vec4>(Constant::SF_CLIPOUT,size,data);
+    Triangle *data;
+    GPUMemory::retrieve<Triangle>(Constant::SF_CLIPOUT,size,data);
 
 
     vector<sf::Vertex> verteices;
     for (int i = 0; i < size; ++i) {
-        sf::Vertex vertex(sf::Vector2f(data[i].x,data[i].y));
-        vertex.color =  sf::Color::Red;
-        verteices.push_back(vertex);
+        Triangle &tri = data[i];
+        for (int var = 0; var < 3; ++var) {
+            glm::vec4 &vert = *(&tri.p1+var);
+            sf::Vertex vertex(sf::Vector2f(vert.x,vert.y));
+            vertex.color =  sf::Color::Red;
+            verteices.push_back(vertex);
+        }
+
     }
 
     //    sf::Clock clock;
@@ -44,7 +60,7 @@ int main()
         window.clear(sf::Color::Black);
 
 
-        window.draw(verteices.data(),verteices.size(),sf::Triangles);
+        window.draw(verteices.data(),verteices.size(),sf::LinesStrip);
 
         sf::Event event;
         while(window.pollEvent(event)){
@@ -69,7 +85,6 @@ int main()
             }
 
         }
-        cout << "update";
 
         window.display();
 

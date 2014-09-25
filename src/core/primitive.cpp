@@ -19,8 +19,6 @@ bool Primitive::setup(PrimitiveType type, int count)
         return true;
     }
 
-
-
     switch (type) {
     case TRIANGLES:{
         Triangle* objects;
@@ -28,6 +26,7 @@ bool Primitive::setup(PrimitiveType type, int count)
         size = size/3;
 
         GPUMemory::alloc<Triangle>(Constant::SF_PRIMITIVESETUPOUT,size,objects);
+        //TODO
         for (int i = 0; i < size; i++) {
             objects[i].p1 = positionData[i*3];
             objects[i].p2 = positionData[i*3+1];

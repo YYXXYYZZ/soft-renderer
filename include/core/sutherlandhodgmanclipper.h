@@ -3,7 +3,10 @@
 
 #include "clipper.h"
 #include <vector>
+#include <list>
 using std::vector;
+using std::list;
+using glm::vec4;
 
 class SutherlandHodgmanClipper : public Clipper
 {
@@ -19,10 +22,11 @@ public:
     void Sutherland_Hodgman();
 
 private:
-    void fillData(vector<glm::vec4> &input);
-    void clip(vector<glm::vec4>&input, vector<glm::vec4>&output, Boundary b);
-    bool inside(glm::vec4 p1,Boundary b);
-    glm::vec4 intersect(glm::vec4 p1, glm::vec4 p2, Boundary b);
+    void clip(list<vec4> &input, list<vec4> &output, Boundary b);
+    bool inside(vec4 p1,Boundary b);
+    vec4 intersect(vec4 p1, vec4 p2, Boundary b);
+    // subdivision polygon to triangle
+    void polygonToTriangle(list<vec4> polygon, vector<Triangle> &out);
 
 };
 

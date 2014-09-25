@@ -1,5 +1,6 @@
 #include "core/sutherlandhodgmanclipper.h"
-#include <core/gpumemory.h>
+#include "core/gpumemory.h"
+#include "core/constant.h"
 #include <algorithm>
 
 SutherlandHodgmanClipper::SutherlandHodgmanClipper()
@@ -27,15 +28,9 @@ void SutherlandHodgmanClipper::Sutherland_Hodgman()
         output->clear();
     }
 
-    for (int var = 0; var < input->size(); ++var) {
-        std::cout << input->at(var).x << " ";
-        std::cout << input->at(var).y  << " ";
-        std::cout << input->at(var).z  << std::endl;
-    }
-
     glm::vec4 *data;
-    GPUMemory::alloc<glm::vec4>("sf_clip_output",input->size(),data);
-    GPUMemory::memoryCopy<glm::vec4>("sf_clip_output",input->size(),input->data());
+    GPUMemory::alloc<glm::vec4>(Constant::SF_CLIPOUT,input->size(),data);
+    GPUMemory::memoryCopy<glm::vec4>(Constant::SF_CLIPOUT,input->size(),input->data());
 
     delete input;
     delete output;

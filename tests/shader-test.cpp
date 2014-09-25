@@ -3,7 +3,6 @@
 #include <core/vertexshader.h>
 #include <core/gpumemory.h>
 #include <core/pipeline.h>
-#include <core/sutherlandhodgmanclipper.h>
 #include <core/constant.h>
 #include <glm/glm.hpp>
 
@@ -19,39 +18,39 @@ ostream & operator <<(ostream &os,const Triangle &t){
     return os;
 }
 
+ostream & operator <<(ostream &os,const glm::vec4 &t){
+
+    os << "=================================\n";
+    os << "x: " << t.x << " y: " << t.y << " z: " << t.z << " w: " << t.w << endl;
+    os << "=================================\n";
+    return os;
+}
+
 int main()
 {
     VertexShader *vs = new VertexShader ;
-    Clipper *cp = new SutherlandHodgmanClipper;
     Pipeline pl;
     pl.attachVertexShader(vs);
-    pl.attachClipper(cp);
     pl.render();
 
 
-    Triangle *_data;
+//    Triangle *_data;
+//    int _size;
+//    if (GPUMemory::retrieve<Triangle>(Constant::SF_PRIMITIVESETUPOUT,_size,_data)) {
+//        for (int var = 0; var < _size; ++var) {
+//            cout << _data[var]<< endl;
+//        }
+//    }.
+
+    glm::vec4 *_data;
     int _size;
-    if (GPUMemory::retrieve<Triangle>(Constant::SF_PRIMITIVESETUPOUT,_size,_data)) {
+    if (GPUMemory::retrieve<glm::vec4>(Constant::SF_CLIPOUT,_size,_data)) {
         for (int var = 0; var < _size; ++var) {
             cout << _data[var]<< endl;
         }
     }
 
     delete vs;
-    delete cp;
-
-    //    glm::vec4 a(0.0f,0.0f,0.0f,1.0f);
-    //    glm::mat4 projection = glm::perspective(60.0f, (float)800/600, 0.3f, 100.0f);
-    //    glm::mat4 view = glm::lookAt(glm::vec3(0.0f,0.0f,-1.0f),
-    //                                 glm::vec3(0.0f,0.0f,0.0f),
-    //                                 glm::vec3(0.0f,1.0f,0.0f));
-    //    glm::mat4 MVP = projection*view;
-    //    a= MVP *a;
-    //    cout << "staring \n";
-    //    cout << a[0]<< endl;
-    //    cout << a[1]<< endl;
-    //    cout << a[2]<< endl;
-    //    cout << a[3]<< endl;
 
 
     return 0;

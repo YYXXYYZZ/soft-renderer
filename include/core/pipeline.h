@@ -20,26 +20,27 @@ class Pipeline
 {
 public:
     Pipeline();
+    ~Pipeline();
 
     PipelineConfiguration getConfiguration() const;
     void setConfiguration(const PipelineConfiguration &value);
 
     void attachVertexShader(VertexShader *vertShader);
 
-
-
-
-    void attachClipper(Clipper *clipper);
-
     void render();
+    void clear();
 
 
 
 private:
+
+    void viewPortTransform();
+
     PipelineConfiguration configuration;
     VertexShader *vertShader;
     Clipper *clipper;
     Primitive primitive;
 };
+
 
 #endif // PIPELINE_H

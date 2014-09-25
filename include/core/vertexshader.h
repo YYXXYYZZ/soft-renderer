@@ -26,7 +26,7 @@ private:
     int h = 600;
 
     glm::mat4 MVP;
-    data_info<int> _positions;
+    data_info<float> _positions;
     data_info<float> _color;
     data_info<glm::vec4> _out;
 };

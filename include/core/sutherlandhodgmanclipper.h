@@ -14,7 +14,6 @@ public:
         Near,Far
     };
 
-
     SutherlandHodgmanClipper();
     void execute();
     void Sutherland_Hodgman();

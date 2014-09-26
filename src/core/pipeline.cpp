@@ -30,7 +30,7 @@ void Pipeline::render()
     vertShader->execute();
 
     //TODO fix me :6
-    primitive.setup(TRIANGLES,6);
+    primitive.setup(TRIANGLES,3);
 
     if (!clipper) {
         std::cerr << "Warning: null clipper! "<<std::endl;
@@ -54,8 +54,8 @@ void Pipeline::viewPortTransform()
     Triangle *data;
     if (!GPUMemory::retrieve<Triangle>(Constant::SF_CLIPOUT,size,data))
         return;
-    int width = 800;
-    int height = 600;
+    int width = 400;
+    int height = 300;
     int x = 0;
     int y = 0;
     float far = -1.0f;

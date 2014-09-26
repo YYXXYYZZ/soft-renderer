@@ -23,8 +23,8 @@ void SutherlandHodgmanClipper::Sutherland_Hodgman()
     // clip each primitive
     for (int i = 0; i < primitiveCount; ++i) {
 
-        list<vec4> *input = new list<vec4>;
-        list<vec4> *output = new list<vec4>;
+        vector<vec4> *input = new vector<glm::vec4>;
+        vector<vec4> *output = new vector<glm::vec4>;
 
         input->push_back(triangle[i].p1);
         input->push_back(triangle[i].p2);
@@ -42,11 +42,9 @@ void SutherlandHodgmanClipper::Sutherland_Hodgman()
 
         if (input->size()==3) {
             Triangle tri;
-            tri.p1 = input->front();
-            input->pop_front();
-            tri.p2 = input->front();
-            input->pop_front();
-            tri.p3 = input->front();
+            tri.p1 = input->at(0);
+            tri.p2 = input->at(1);
+            tri.p3 = input->at(2);
             outPrimitive.push_back(tri);
         }
         // size less than 3?
@@ -61,17 +59,13 @@ void SutherlandHodgmanClipper::Sutherland_Hodgman()
 }
 
 
-void SutherlandHodgmanClipper::clip(list<vec4> &input,
-                                    list<vec4> &output,
+void SutherlandHodgmanClipper::clip(vector<vec4> &input,
+                                    vector<vec4> &output,
                                     Boundary b)
 {
-    for (list<vec4>::iterator iter = input.begin(); iter != input.end(); ++iter) {
-        vec4 begin = *iter;
-        list<vec4>::iterator iter_end = iter;
-        iter_end++;
-        if (iter_end == input.end())
-            iter_end = input.begin();
-        vec4 end = *iter_end;
+    for (int i = 0; i < input.size(); ++i) {
+        vec4 begin = input[i];
+        vec4 end = input[(i+1)%input.size()];
 
         // both inside, put end to output
         if (inside(begin,b) && inside(end,b))
@@ -194,32 +188,43 @@ vec4 SutherlandHodgmanClipper::intersect(vec4 p1,vec4 p2, Boundary b)
     return result;
 }
 
-void SutherlandHodgmanClipper::polygonToTriangle(list<vec4> polygon,
+void SutherlandHodgmanClipper::polygonToTriangle(vector<vec4> inPolygon,
                                                  vector<Triangle> &out)
 {
-    // find the most left point
-    float min_x = polygon.front().x;
-    list<vec4>::iterator middle;
-    list<vec4>::iterator left;
-    list<vec4>::iterator right;
-    for (list<vec4>::iterator iter = polygon.begin(); iter != polygon.end(); ++iter) {
-       if (iter->x < min_x){
-           min_x = iter->x;
-           middle = iter;
-       }
+    if(inPolygon.size()==3){
+        Triangle tri;
+        tri.p1 = inPolygon[0];
+        tri.p2 = inPolygon[1];
+        tri.p3 = inPolygon[2];
+        out.push_back(tri);
+        return;
     }
-    // find left
+
+    // find middle
+    float min_x = inPolygon.front().x;
+    // must initialize the iterator for begin,
+    // if middle is first element,
+    // middle == polygon.begin() will return false
+    vector<vec4>::iterator middle = inPolygon.begin();
+    vector<vec4>::iterator left  = inPolygon.begin();
+    vector<vec4>::iterator right  = inPolygon.begin();
+    for (vector<vec4>::iterator iter = inPolygon.begin(); iter != inPolygon.end(); ++iter) {
+        if (iter->x < min_x){
+            min_x = iter->x;
+            middle = iter;
+        }
+    }
     left = middle;
-    if (left==polygon.begin()) {
-        left = polygon.end();
+    right = middle;
+    // find left
+    if  (left==inPolygon.begin()){
+        left = inPolygon.end();
     }
     left--;
-
     // find right
-    right = middle;
     right++;
-    if (right==polygon.end()) {
-        right = polygon.begin();
+    if (right==inPolygon.end()) {
+        right=inPolygon.begin();
     }
 
     // target triangle
@@ -228,19 +233,56 @@ void SutherlandHodgmanClipper::polygonToTriangle(list<vec4> polygon,
     tri.p2 = *middle;
     tri.p3 = *right;
 
-    out.push_back(tri);
-
+    vector<vec4> polygon;
     // check other point inside
-//    for (int i = 0; i < total; ++i) {
-//        tri.inside();
-        ;
-//    }
+    bool check = false;
+    int pIndex;
 
-    // no, delete index point and continue
+    int begin = (right - inPolygon.begin()+1)%inPolygon.size();
+    int end = left - inPolygon.begin();
 
+    for (int i = begin; i != end;) {
+        if (tri.inside(inPolygon.at(i))) {
+            check = true;
+            pIndex = i;
+        }
+        // add into new vector
+        polygon.push_back(inPolygon.at(i));
+
+        ++i;
+        i%=inPolygon.size();
+    }
 
     // yes, spilt to two polygon
+    if(check){
+        vector<vec4> polygon_1;
+        vector<vec4> polygon_2;
 
+        // copy middle to p into 1
+        for (int i= &(*middle)-&inPolygon[0]; i != pIndex+1;) {
+            polygon_1.push_back(inPolygon.at(i));
+            i++;
+            i%=inPolygon.size();
+        }
+
+        // copy p to middle into 2
+        for (int i= pIndex; i != &(*middle)-&inPolygon[0]+1;) {
+            polygon_2.push_back(inPolygon.at(i));
+            i++;
+            i%=inPolygon.size();
+        }
+
+        polygonToTriangle(polygon_1,out);
+        polygonToTriangle(polygon_2,out);
+    }
+    else{
+        // no, add tri to out
+        // delete index point and continue
+        out.push_back(tri);
+        polygon.push_back(*left);
+        polygon.push_back(*right);
+        polygonToTriangle(polygon,out);
+    }
 }
 
 

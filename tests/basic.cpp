@@ -24,17 +24,17 @@ int main()
     pl.attachVertexShader(vs);
     pl.render();
 
-//    int size;
-//    glm::vec4 *data;
-//    GPUMemory::retrieve<glm::vec4>(Constant::SF_CLIPOUT,size,data);
+    //    int size;
+    //    glm::vec4 *data;
+    //    GPUMemory::retrieve<glm::vec4>(Constant::SF_CLIPOUT,size,data);
 
 
-//    vector<sf::Vertex> verteices;
-//    for (int i = 0; i < size; ++i) {
-//        sf::Vertex vertex(sf::Vector2f(data[i].x,data[i].y));
-//        vertex.color =  sf::Color::Red;
-//        verteices.push_back(vertex);
-//    }
+    //    vector<sf::Vertex> verteices;
+    //    for (int i = 0; i < size; ++i) {
+    //        sf::Vertex vertex(sf::Vector2f(data[i].x,data[i].y));
+    //        vertex.color =  sf::Color::Red;
+    //        verteices.push_back(vertex);
+    //    }
     int size;
     Triangle *data;
     GPUMemory::retrieve<Triangle>(Constant::SF_CLIPOUT,size,data);
@@ -45,12 +45,17 @@ int main()
         Triangle &tri = data[i];
         for (int var = 0; var < 3; ++var) {
             glm::vec4 &vert = *(&tri.p1+var);
-            sf::Vertex vertex(sf::Vector2f(vert.x,vert.y));
+            sf::Vertex vertex(sf::Vector2f(vert.x,height-vert.y));
             vertex.color =  sf::Color::Red;
             verteices.push_back(vertex);
         }
 
     }
+
+    vector<sf::Vertex> verteices2;
+    sf::Vertex vertex(sf::Vector2f(100,100));
+    vertex.color =  sf::Color::Red;
+    verteices2.push_back(vertex);
 
     //    sf::Clock clock;
     //    clock.restart();
@@ -60,7 +65,8 @@ int main()
         window.clear(sf::Color::Black);
 
 
-        window.draw(verteices.data(),verteices.size(),sf::LinesStrip);
+        window.draw(verteices.data(),verteices.size(),sf::Points);
+        window.draw(verteices2.data(),verteices2.size(),sf::Points);
 
         sf::Event event;
         while(window.pollEvent(event)){
@@ -82,6 +88,12 @@ int main()
 
             if (event.type == sf::Event::Closed) {
                 window.close();
+            }
+
+            if (event.type == sf::Event::Resized)
+            {
+                // adjust the viewport when the window is resized
+                glViewport(0, 0, event.size.width, event.size.height);
             }
 
         }

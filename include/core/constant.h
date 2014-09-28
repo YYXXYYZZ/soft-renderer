@@ -2,9 +2,12 @@
 #define CONSTANT_H
 
 #include <string>
-using std::string;
 
-// built in variable
+/**
+ *  built in constant for GPU memory usage.
+ */
+
+using std::string;
 
 namespace Constant {
 const string SF_POSITION = "sf_position";
@@ -13,8 +16,6 @@ const string SF_CLIPOUT = "sf_clip_output";
 const string SF_PRIMITIVESETUPOUT = "sf_primitive_setup_out";
 
 }
-
-
 
 
 

@@ -1,20 +1,20 @@
 #include "core/pipeline.h"
 #include "core/gpumemory.h"
 #include "core/constant.h"
-#include "core/sutherlandhodgmanclipper.h"
+#include "core/sh-clipper.h"
 #include <iostream>
 
 Pipeline::Pipeline()
 {
-    clipper = new SutherlandHodgmanClipper;
     primitive = new Primitive;
+    clipper = new SHClipper;
     culler = new Culler;
 }
 
 Pipeline::~Pipeline()
 {
-    delete clipper;
     delete primitive;
+    delete clipper;
     delete culler;
 }
 

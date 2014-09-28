@@ -1,5 +1,5 @@
 #include <iostream>
-#include <core/sutherlandhodgmanclipper.h>
+#include <core/sh-clipper.h>
 #include <core/gpumemory.h>
 #include <core/constant.h>
 
@@ -27,7 +27,7 @@ int main(){
 //    data[1] = glm::vec4(-1.0f,0.5f,1.0f,1.0f);
 //    data[2] = glm::vec4(1.0f,0.5f,2.0f,1.0f);
 
-    SutherlandHodgmanClipper clipper;
+    SHClipper clipper;
 //    clipper.execute();
 
     vector<vec4> inPolygon;

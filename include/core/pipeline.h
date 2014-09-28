@@ -31,16 +31,14 @@ public:
     void render();
     void clear();
 
-
-
 private:
-
     void viewPortTransform();
 
     PipelineConfiguration configuration;
+
     VertexShader *vertShader;
-    Clipper *clipper;
     Primitive *primitive;
+    Clipper *clipper;
     Culler *culler;
 };
 

@@ -9,15 +9,14 @@ Clipper::Clipper()
 
 void Clipper::initialize()
 {
-    if  (!GPUMemory::retrieve<Triangle>(Constant::SF_PRIMITIVESETUPOUT,primitiveCount,triangle)) {
+    if  (!GPUMemory::retrieve<Triangle>(Constant::SF_PRIMITIVESETUPOUT,
+                                        primitiveCount,
+                                        triangle)) {
+        std::cerr << "retrieve failed in Clipper::initialize" << std::endl;
         return;
     }
     canClip = true;
 }
 
-void Clipper::execute()
-{
-    initialize();
-}
 
 

@@ -8,7 +8,7 @@ public:
     Clipper();
 
     void initialize();
-    virtual void execute();
+    virtual void execute() = 0;
 
     // for line
     // void Cohen_Sutherland();

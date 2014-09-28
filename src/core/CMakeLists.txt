@@ -8,7 +8,6 @@ set(SRC
     ${SRCROOT}/primitive.cpp
     ${INCROOT}/culler.h
     ${SRCROOT}/culler.cpp
-    ${INCROOT}/global.h
     ${SRCROOT}/shader.cpp
     ${INCROOT}/shader.h
     ${SRCROOT}/vertexshader.cpp
@@ -19,8 +18,8 @@ set(SRC
     ${INCROOT}/pipeline.h
     ${SRCROOT}/clipper.cpp
     ${INCROOT}/clipper.h
-    ${SRCROOT}/sutherlandhodgmanclipper.cpp
-    ${INCROOT}/sutherlandhodgmanclipper.h
+    ${SRCROOT}/sh-clipper.cpp
+    ${INCROOT}/sh-clipper.h
     ${INCROOT}/constant.h
 )
 SET(BUILD_SHARED_LIBS ON)

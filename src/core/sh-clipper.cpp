@@ -1,25 +1,25 @@
-#include "core/sutherlandhodgmanclipper.h"
+#include "core/sh-clipper.h"
 #include "core/gpumemory.h"
 #include "core/constant.h"
 #include <algorithm>
 
-SutherlandHodgmanClipper::SutherlandHodgmanClipper()
+SHClipper::SHClipper()
 {
 }
 
-void SutherlandHodgmanClipper::execute()
+void SHClipper::execute()
 {
-    Clipper::execute();
+    initialize();
     Sutherland_Hodgman();
 }
 
-void SutherlandHodgmanClipper::Sutherland_Hodgman()
+void SHClipper::Sutherland_Hodgman()
 {
     if(!canClip)
         return;
 
     vector<Triangle> outPrimitive;
-    // TODO
+    // TODO parallel
     // clip each primitive
     for (int i = 0; i < primitiveCount; ++i) {
 
@@ -59,7 +59,7 @@ void SutherlandHodgmanClipper::Sutherland_Hodgman()
 }
 
 
-void SutherlandHodgmanClipper::clip(vector<vec4> &input,
+void SHClipper::clip(vector<vec4> &input,
                                     vector<vec4> &output,
                                     Boundary b)
 {
@@ -94,7 +94,7 @@ void SutherlandHodgmanClipper::clip(vector<vec4> &input,
     }
 }
 
-bool SutherlandHodgmanClipper::inside(vec4 p1, Boundary b)
+bool SHClipper::inside(vec4 p1, Boundary b)
 {
     switch (b) {
     case Left:
@@ -128,7 +128,7 @@ bool SutherlandHodgmanClipper::inside(vec4 p1, Boundary b)
     return true;
 }
 
-vec4 SutherlandHodgmanClipper::intersect(vec4 p1,vec4 p2, Boundary b)
+vec4 SHClipper::intersect(vec4 p1,vec4 p2, Boundary b)
 {
     vec4 result;
 
@@ -187,9 +187,14 @@ vec4 SutherlandHodgmanClipper::intersect(vec4 p1,vec4 p2, Boundary b)
     }
     return result;
 }
-
-void SutherlandHodgmanClipper::polygonToTriangle(vector<vec4> inPolygon,
-                                                 vector<Triangle> &out)
+/**
+ * @brief SHClipper::polygonToTriangle
+ *        subdivision polygon to triangle
+ * @param inPolygon
+ * @param out
+ */
+void SHClipper::polygonToTriangle(vector<vec4> inPolygon,
+                                  vector<Triangle> &out)
 {
     if(inPolygon.size()==3){
         Triangle tri;

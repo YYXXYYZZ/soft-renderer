@@ -7,11 +7,15 @@
 Pipeline::Pipeline()
 {
     clipper = new SutherlandHodgmanClipper;
+    primitive = new Primitive;
+    culler = new Culler;
 }
 
 Pipeline::~Pipeline()
 {
     delete clipper;
+    delete primitive;
+    delete culler;
 }
 
 void Pipeline::attachVertexShader(VertexShader *vertShader)
@@ -28,16 +32,11 @@ void Pipeline::render()
         return;
     }
     vertShader->execute();
-
     //TODO fix me :6
-    primitive.setup(TRIANGLES,3);
-
-    if (!clipper) {
-        std::cerr << "Warning: null clipper! "<<std::endl;
-        return;
-    }
+    primitive->setup(TRIANGLES,36);
 
     clipper->execute();
+    culler->execute();
 
     viewPortTransform();
 }
@@ -52,8 +51,10 @@ void Pipeline::viewPortTransform()
 {
     int size;
     Triangle *data;
-    if (!GPUMemory::retrieve<Triangle>(Constant::SF_CLIPOUT,size,data))
+    if (!GPUMemory::retrieve<Triangle>(Constant::SF_CLIPOUT,size,data)){
+        std::cerr << "viewPortTransform\n";
         return;
+    }
     int width = 400;
     int height = 300;
     int x = 0;
@@ -64,6 +65,10 @@ void Pipeline::viewPortTransform()
     for (int i = 0; i < size; ++i) {
         // for each triangle
         Triangle &tri = data[i];
+        // skip back faces
+        if (tri.backFacing) {
+            continue;
+        }
         for (int var = 0; var < 3; ++var) {
             glm::vec4 &vert = *(&tri.p1+var);
 

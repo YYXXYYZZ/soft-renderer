@@ -24,6 +24,7 @@ struct Triangle{
     vec4 p1;
     vec4 p2;
     vec4 p3;
+    bool backFacing;
 
     bool inside(const vec4&p) const{
         /*

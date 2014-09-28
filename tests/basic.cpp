@@ -39,34 +39,36 @@ int main()
     Triangle *data;
     GPUMemory::retrieve<Triangle>(Constant::SF_CLIPOUT,size,data);
 
+    typedef unsigned char Uint8;
+    Uint8 r = 10;
+    Uint8 g = 50;
+    Uint8 b = 100;
 
     vector<sf::Vertex> verteices;
     for (int i = 0; i < size; ++i) {
         Triangle &tri = data[i];
+        if (tri.backFacing) {
+            continue;
+        }
         for (int var = 0; var < 3; ++var) {
             glm::vec4 &vert = *(&tri.p1+var);
             sf::Vertex vertex(sf::Vector2f(vert.x,height-vert.y));
-            vertex.color =  sf::Color::Red;
+            vertex.color.r = r;
+            vertex.color.g = g;
+            vertex.color.b = b;
+            r+=10;g+=10;b+=10;
             verteices.push_back(vertex);
         }
 
     }
 
-    vector<sf::Vertex> verteices2;
-    sf::Vertex vertex(sf::Vector2f(100,100));
-    vertex.color =  sf::Color::Red;
-    verteices2.push_back(vertex);
-
     //    sf::Clock clock;
     //    clock.restart();
     while(window.isOpen()){
 
-
         window.clear(sf::Color::Black);
 
-
         window.draw(verteices.data(),verteices.size(),sf::Points);
-        window.draw(verteices2.data(),verteices2.size(),sf::Points);
 
         sf::Event event;
         while(window.pollEvent(event)){

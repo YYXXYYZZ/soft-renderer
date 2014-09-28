@@ -4,6 +4,7 @@
 #include "vertexshader.h"
 #include "clipper.h"
 #include "primitive.h"
+#include "culler.h"
 
 
 enum ClipperType{
@@ -39,7 +40,8 @@ private:
     PipelineConfiguration configuration;
     VertexShader *vertShader;
     Clipper *clipper;
-    Primitive primitive;
+    Primitive *primitive;
+    Culler *culler;
 };
 
 

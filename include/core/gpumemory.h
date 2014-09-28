@@ -6,13 +6,10 @@
 #include <typeindex>
 #include <iostream>
 #include <exception>
-#include "global.h"
 
 using std::string;
 using std::map;
 using std::type_index;
-
-
 
 namespace GPUMemory {
 
@@ -43,6 +40,25 @@ bool alloc(const string& name, const int & size,T *&pointer){
     }
     return true;
 }
+
+template<class T>
+bool alloc(const string& name, const int & size){
+    try{
+        Global_Data.at(name);
+        std::cerr << "Warning: alloc exist element! " << name << std::endl;
+        return false;
+    }
+    catch(const std::out_of_range & ){
+        MemoryInfo info;
+        T *data = new T[size]();
+        info.address = static_cast<void *>(data);
+        info.size = size;
+        info.type = typeid(T).name();
+        Global_Data[name] = info;
+    }
+    return true;
+}
+
 
 template<class T>
 void dealloc(const string& name)

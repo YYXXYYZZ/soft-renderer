@@ -6,7 +6,7 @@ class Clipper
 {
 public:
     Clipper();
-
+    virtual ~Clipper();
     void initialize();
     virtual void execute() = 0;
 

@@ -7,6 +7,11 @@ Clipper::Clipper()
 {
 }
 
+Clipper::~Clipper()
+{
+
+}
+
 void Clipper::initialize()
 {
     if  (!GPUMemory::retrieve<Triangle>(Constant::SF_PRIMITIVESETUPOUT,

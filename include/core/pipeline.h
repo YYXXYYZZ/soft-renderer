@@ -8,21 +8,24 @@ enum ClipperType{
     WeilerAtherton
 };
 
-struct Config{
-    PrimitiveType pri;
-    int width;
-    int height;
-};
 
 class Shader;
 class ZBuffer;
 class Culler;
 class Clipper;
 class FrameBuffer;
+class vec3;
 
 class Pipeline
 {
 public:
+    struct Config{
+        int width;
+        int height;
+        glm::vec3 clearColor;
+        PrimitiveType primitiveType;
+    };
+
     Pipeline();
     ~Pipeline();
 
@@ -37,6 +40,8 @@ public:
     FrameBuffer *getFrameBuffer() const;
     void setFrameBuffer(FrameBuffer *value);
 
+    vec3* getColorBuffer() const;
+
 private:
     Config config;
     Clipper *clipper;
@@ -46,6 +51,8 @@ private:
     Shader *vertShader;
     Shader *fragShader;
     FrameBuffer *frameBuffer;
+
+    void initFrameBuffer();
 };
 
 

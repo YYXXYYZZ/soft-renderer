@@ -44,45 +44,45 @@ void VertexShader::initialize()
         H[0],H[1],H[2],
         E[0],E[1],E[2],
         // left
-        H[0],H[1],H[2],
+        B[0],B[1],B[2],
+        D[0],D[1],D[2],
         G[0],G[1],G[2],
-        B[0],B[1],B[2],
 
-        B[0],B[1],B[2],
+        G[0],G[1],G[2],
         D[0],D[1],D[2],
         H[0],H[1],H[2],
         //right
+        F[0],F[1],F[2],
+        E[0],E[1],E[2],
+        A[0],A[1],A[2],
+
+        A[0],A[1],A[2],
         E[0],E[1],E[2],
         C[0],C[1],C[2],
-        F[0],F[1],F[2],
-
-        F[0],F[1],F[2],
-        C[0],C[1],C[2],
-        A[0],A[1],A[2],
         //back
+        A[0],A[1],A[2],
+        C[0],C[1],C[2],
+        B[0],B[1],B[2],
+
+        B[0],B[1],B[2],
         C[0],C[1],C[2],
         D[0],D[1],D[2],
-        A[0],A[1],A[2],
-
-        D[0],D[1],D[2],
-        B[0],B[1],B[2],
-        A[0],A[1],A[2],
         //top
-        G[0],G[1],G[2],
-        F[0],F[1],F[2],
-        A[0],A[1],A[2],
+        H[0],H[1],H[2],
+        D[0],D[1],D[2],
+        E[0],E[1],E[2],
 
-        A[0],A[1],A[2],
+        E[0],E[1],E[2],
+        D[0],D[1],D[2],
+        C[0],C[1],C[2],
+        //bottom
         B[0],B[1],B[2],
         G[0],G[1],G[2],
-        //bottom
-        H[0],H[1],H[2],
-        E[0],E[1],E[2],
-        F[0],F[1],F[2],
+        A[0],A[1],A[2],
 
+        A[0],A[1],A[2],
+        G[0],G[1],G[2],
         F[0],F[1],F[2],
-        D[0],D[1],D[2],
-        H[0],H[1],H[2],
 
     };
 
@@ -103,7 +103,7 @@ void VertexShader::initialize()
     GPUMemory::memoryCopy<float>("color",9,color);
 
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::rotate(model,45.0f,glm::vec3(0,1,0));
+    model = glm::rotate(model,-45.0f,glm::vec3(0,1,0));
     model = glm::rotate(model,45.0f,glm::vec3(1,0,0));
     glm::mat4 view = glm::lookAt(glm::vec3(0.0f,0.0f,1.0f),
                                  glm::vec3(1.0f,1.0f,1.0f),

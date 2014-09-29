@@ -21,57 +21,23 @@ int main()
     }
 
     VertexShader *vs = new VertexShader ;
+    Pipeline::Config config;
+    config.height = height;
+    config.width = width;
+    config.primitiveType = TRIANGLES;
+    config.clearColor = glm::vec3(0.0f,0.0f,0.0f);
     Pipeline pl;
+    pl.setConfig(config);
     pl.attachVertShader(vs);
     pl.render();
 
-    //    int size;
-    //    glm::vec4 *data;
-    //    GPUMemory::retrieve<glm::vec4>(Constant::SF_CLIPOUT,size,data);
-
-
-    //    vector<sf::Vertex> verteices;
-    //    for (int i = 0; i < size; ++i) {
-    //        sf::Vertex vertex(sf::Vector2f(data[i].x,data[i].y));
-    //        vertex.color =  sf::Color::Red;
-    //        verteices.push_back(vertex);
-    //    }
-    int size;
-    Triangle *data;
-    GPUMemory::retrieve<Triangle>(Constant::SF_CLIPOUT,size,data);
-
-    typedef unsigned char Uint8;
-    Uint8 r = 10;
-    Uint8 g = 50;
-    Uint8 b = 100;
-
-    vector<sf::Vertex> verteices;
-    for (int i = 0; i < size; ++i) {
-        Triangle &tri = data[i];
-        if (tri.backFacing) {
-            continue;
-        }
-        for (int var = 0; var < 3; ++var) {
-            glm::vec4 &vert = *(&tri.p1+var);
-            sf::Vertex vertex(sf::Vector2f(vert.x,height-vert.y));
-            vertex.color.r = r;
-            vertex.color.g = g;
-            vertex.color.b = b;
-            r+=10;g+=10;b+=10;
-            verteices.push_back(vertex);
-        }
-
-    }
-
-    //    sf::Clock clock;
-    //    clock.restart();
+    //sf::Clock clock;
+    //clock.restart();
     while(window.isOpen()){
 
-        window.clear(sf::Color::Black);
-
-        window.draw(verteices.data(),verteices.size(),sf::Points);
-
         sf::Event event;
+        glDrawPixels(width,height,GL_RGB,GL_FLOAT,pl.getColorBuffer());
+
         while(window.pollEvent(event)){
             if(event.type == sf::Event::MouseButtonPressed){
                 int x = event.mouseButton.x;
@@ -102,11 +68,9 @@ int main()
         }
 
         window.display();
-
-
-        //        float fps = 1.f / clock.getElapsedTime().asSeconds();
-        //        std::cout << "fps" << fps << std::endl;
-        //        clock.restart();
+        //float fps = 1.f / clock.getElapsedTime().asSeconds();
+        //std::cout << "fps" << fps << std::endl;
+        //clock.restart();
     }
 
     return 0;

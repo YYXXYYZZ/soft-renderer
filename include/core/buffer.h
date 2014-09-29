@@ -9,39 +9,43 @@ class Buffer
 public:
     Buffer(int width,int height);
     ~Buffer();
-    T& data(int x,int y);
+    T& dataAt(int x,int y);
+    T * buffer();
 private:
     int w;
     int h;
-    T *buffer;
+    T *data;
 };
 
 template <class T>
 Buffer<T>::Buffer(int width, int height)
     :w(width),h(height)
 {
-    buffer = new T[width * height];
+    data = new T[width * height];
 }
 
 template <class T>
 Buffer<T>::~Buffer()
 {
-    delete []buffer;
+    delete []data;
 }
 
 template <class T>
-T &Buffer<T>::data(int x, int y)
+T &Buffer<T>::dataAt(int x, int y)
 {
     //WARNING: may improve?
-    assert(x*w+y<w*h);
-    return buffer[x*w+y];
+    assert(y*w+x<w*h);
+    return data[y*w+x];
+}
+
+template <class T>
+T *Buffer<T>::buffer()
+{
+    return data;
 }
 
 struct FrameBuffer
 {
-    FrameBuffer(int width,int height);
-    ~FrameBuffer();
-
     int w;
     int h;
     Buffer<float> *zBuffer;

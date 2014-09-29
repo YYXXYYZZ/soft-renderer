@@ -27,7 +27,7 @@ void ZBuffer::setFrameBuffer(FrameBuffer *value)
 {
     frameBuffer = value;
 }
-
+static int debug_plane = 0;
 void ZBuffer::execute()
 {
     if (!frameBuffer){
@@ -95,6 +95,8 @@ void ZBuffer::execute()
         const float deltaZX = - normal.x/normal.z;
         const float deltaZY = - normal.y/normal.z;
 
+
+
         // TODO parallel
         // attention: scan line operate on window coordinate
         for (float scanLine = min.y; scanLine <= max.y; ++scanLine) {
@@ -109,27 +111,29 @@ void ZBuffer::execute()
             // one point
             if (result.size()==1) {
                 float x = *result.begin();
-                z = z + deltaZX * (x-min.x);
-                processBuffer(x,scanLine,z);
+                float zResult  = z + deltaZX * (x-min.x);
+                processBuffer(x,scanLine,zResult);
             }
 
             // two point
             if (result.size()==2) {
-                float begin = *result.begin();
-                float end = *result.end();
+                float begin = *(result.begin());
+                float end = *(--result.end());
                 if (begin>end)
                     std::swap(begin,end);
 
                 // TODO: parallel
                 // for each pixel between point
                 for (float x = begin; x < end; ++x) {
-                    z = z + deltaZX * (x-min.x);
-                    processBuffer(x,scanLine,z);
+                    float zResult = z + deltaZX * (x-min.x);
+                    processBuffer(x,scanLine,zResult);
                 }
 
             }
 
         }
+
+        debug_plane++;
 
     }
 }
@@ -139,12 +143,12 @@ void ZBuffer::processBuffer(float x,float y,float zValue)
     int _x = round(x);
     int _y = round(y);
 
-    float &z = frameBuffer->zBuffer->data(_x,_y);
+    float &z = frameBuffer->zBuffer->dataAt(_x,_y);
 
+    static float t= 0.0f;
     if (zValue < z){
-        z = zValue;
         //TODO color...
-        frameBuffer->colorBuffer->data(_x,_y) = glm::vec3(0.5f,0.5f,0.5f);
+        frameBuffer->colorBuffer->dataAt(_x,_y) = glm::vec3(0.7f-debug_plane*0.1,debug_plane*0.1+0.3f,0.5f);
     }
 
 }

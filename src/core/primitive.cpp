@@ -107,7 +107,7 @@ void Triangle::extremeValue(glm::vec2 &_min, glm::vec2 &_max) const
     xMin = fmin(xMin,p3.x);
 
     yMin = fmin(p1.y,p2.y);
-    yMin = fmin(xMin,p3.y);
+    yMin = fmin(yMin,p3.y);
 
     xMax = fmax(p1.x,p2.x);
     xMax = fmax(xMax,p3.x);

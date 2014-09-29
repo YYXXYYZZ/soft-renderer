@@ -2,28 +2,8 @@
 #include "core/gpumemory.h"
 #include "core/primitive.h"
 #include "core/constant.h"
+#include "core/buffer.h"
 #include <algorithm>
-
-template <class T>
-Buffer<T>::Buffer(int width, int height)
-    :w(width),h(height)
-{
-    buffer = new T[width * height];
-}
-
-template <class T>
-Buffer<T>::~Buffer()
-{
-    delete []buffer;
-}
-
-template <class T>
-T &Buffer<T>::data(int x, int y)
-{
-    //WARNING: may improve?
-    assert(x*w+y<w*h);
-    return buffer[x*w+y];
-}
 
 /**
  * @brief ZBuffer::ZBuffer

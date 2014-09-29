@@ -2,28 +2,62 @@
 #include "core/gpumemory.h"
 #include "core/constant.h"
 #include "core/sh-clipper.h"
+#include "core/culler.h"
+#include "core/clipper.h"
+#include "core/zbuffer.h"
+#include "core/vertexshader.h"
+#include "core/buffer.h"
 #include <iostream>
 
 Pipeline::Pipeline()
 {
-    primitive = new Primitive;
     clipper = new SHClipper;
     culler = new Culler;
+    zbuffer = new ZBuffer;
+    primitive = new Primitive;
 }
 
 Pipeline::~Pipeline()
 {
-    delete primitive;
     delete clipper;
     delete culler;
+    delete zbuffer;
+    delete primitive;
+    if(frameBuffer)
+        delete frameBuffer;
+
 }
 
-void Pipeline::attachVertexShader(VertexShader *vertShader)
+void Pipeline::attachVertShader(Shader *vShader)
 {
-    this->vertShader = vertShader;
+    vertShader = vShader;
 }
 
+void Pipeline::attachFragShader(Shader *fShader)
+{
+    fragShader = fShader;
+}
+FrameBuffer *Pipeline::getFrameBuffer() const
+{
+    return frameBuffer;
+}
 
+void Pipeline::setFrameBuffer(FrameBuffer *value)
+{
+    frameBuffer = value;
+}
+
+Config Pipeline::getConfig() const
+{
+    return config;
+}
+
+void Pipeline::setConfig(const Config &value)
+{
+    config = value;
+    frameBuffer = new FrameBuffer(value.width,value.height);
+    zbuffer->setFrameBuffer(frameBuffer);
+}
 
 void Pipeline::render()
 {
@@ -37,61 +71,13 @@ void Pipeline::render()
 
     clipper->execute();
     culler->execute();
-
-    viewPortTransform();
+    zbuffer->execute();
 }
 
+//TODO clear
 void Pipeline::clear()
 {
     GPUMemory::dealloc<Triangle>(Constant::SF_PRIMITIVESETUPOUT);
-
 }
 
-void Pipeline::viewPortTransform()
-{
-    int size;
-    Triangle *data;
-    if (!GPUMemory::retrieve<Triangle>(Constant::SF_CLIPOUT,size,data)){
-        std::cerr << "failed to retrieve in viewPortTransform" << std::endl;
-        return;
-    }
-    int width = 400;
-    int height = 300;
-    int x = 0;
-    int y = 0;
-    float far = -1.0f;
-    float near = 1.0f;
-
-    for (int i = 0; i < size; ++i) {
-        // for each triangle
-        Triangle &tri = data[i];
-        // skip back faces
-        if (tri.backFacing) {
-            continue;
-        }
-        for (int var = 0; var < 3; ++var) {
-            glm::vec4 &vert = *(&tri.p1+var);
-
-            // perspective divide
-            vert.x = vert.x / vert.w;
-            vert.y = vert.y / vert.w;
-            vert.z = vert.z / vert.w;
-
-            // viewport transform
-            vert.x = width/2*vert.x + x + width/2;
-            vert.y = height/2*vert.y + y + height/2;
-            vert.z = (far-near)/2*vert.z + (far + near)/2;
-            vert.w = 1.0f;
-        }
-    }
-}
-PipelineConfiguration Pipeline::getConfiguration() const
-{
-    return configuration;
-}
-
-void Pipeline::setConfiguration(const PipelineConfiguration &value)
-{
-    configuration = value;
-}
 

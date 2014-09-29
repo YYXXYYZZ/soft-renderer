@@ -4,6 +4,8 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/src/core)
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 set(SRC
+    ${INCROOT}/buffer.h
+    ${SRCROOT}/buffer.cpp
     ${INCROOT}/zbuffer.h
     ${SRCROOT}/zbuffer.cpp
     ${INCROOT}/primitive.h

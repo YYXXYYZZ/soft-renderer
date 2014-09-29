@@ -30,7 +30,7 @@ int main()
 {
     VertexShader *vs = new VertexShader ;
     Pipeline pl;
-    pl.attachVertexShader(vs);
+    pl.attachVertShader(vs);
     pl.render();
 
 

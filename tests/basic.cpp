@@ -3,6 +3,7 @@
 #include <core/pipeline.h>
 #include <core/gpumemory.h>
 #include <core/constant.h>
+#include <core/vertexshader.h>
 #include <GL/glew.h>
 using namespace std;
 
@@ -21,7 +22,7 @@ int main()
 
     VertexShader *vs = new VertexShader ;
     Pipeline pl;
-    pl.attachVertexShader(vs);
+    pl.attachVertShader(vs);
     pl.render();
 
     //    int size;

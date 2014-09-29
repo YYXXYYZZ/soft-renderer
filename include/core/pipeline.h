@@ -1,21 +1,24 @@
 #ifndef PIPELINE_H
 #define PIPELINE_H
 
-#include "vertexshader.h"
-#include "clipper.h"
 #include "primitive.h"
-#include "culler.h"
-
 
 enum ClipperType{
     SutherlandHodgman,
     WeilerAtherton
 };
 
-struct PipelineConfiguration{
-    PrimitiveType primitive;
-    ClipperType clipper;
+struct Config{
+    PrimitiveType pri;
+    int width;
+    int height;
 };
+
+class Shader;
+class ZBuffer;
+class Culler;
+class Clipper;
+class FrameBuffer;
 
 class Pipeline
 {
@@ -23,23 +26,26 @@ public:
     Pipeline();
     ~Pipeline();
 
-    PipelineConfiguration getConfiguration() const;
-    void setConfiguration(const PipelineConfiguration &value);
-
-    void attachVertexShader(VertexShader *vertShader);
-
     void render();
     void clear();
+    void attachVertShader(Shader *vShader);
+    void attachFragShader(Shader *fShader);
+
+    Config getConfig() const;
+    void setConfig(const Config &value);
+
+    FrameBuffer *getFrameBuffer() const;
+    void setFrameBuffer(FrameBuffer *value);
 
 private:
-    void viewPortTransform();
-
-    PipelineConfiguration configuration;
-
-    VertexShader *vertShader;
-    Primitive *primitive;
+    Config config;
     Clipper *clipper;
     Culler *culler;
+    ZBuffer *zbuffer;
+    Primitive *primitive;
+    Shader *vertShader;
+    Shader *fragShader;
+    FrameBuffer *frameBuffer;
 };
 
 

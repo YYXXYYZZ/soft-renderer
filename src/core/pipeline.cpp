@@ -52,7 +52,7 @@ void Pipeline::viewPortTransform()
     int size;
     Triangle *data;
     if (!GPUMemory::retrieve<Triangle>(Constant::SF_CLIPOUT,size,data)){
-        std::cerr << "viewPortTransform\n";
+        std::cerr << "failed to retrieve in viewPortTransform" << std::endl;
         return;
     }
     int width = 400;

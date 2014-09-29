@@ -19,9 +19,8 @@ void Culler::execute()
     // TODO: parallel
     for (int i = 0; i < size; ++i) {
         Triangle &tri = data[i];
-        glm::vec3 v1(tri.p2-tri.p1);
-        glm::vec3 v2(tri.p3-tri.p1);
-        glm::vec3 normal = glm::cross(v1,v2);
+
+        glm::vec3 normal = tri.normal();
         if (normal.z<=0) {
             tri.backFacing = true;
         }

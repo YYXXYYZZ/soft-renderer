@@ -1,9 +1,11 @@
 #ifndef PRIMITIVE_H
 #define PRIMITIVE_H
 #include <glm/glm.hpp>
+#include <set>
 
 using glm::vec4;
 using glm::vec3;
+using glm::vec2;
 
 enum PrimitiveType{
     POINTS,
@@ -21,42 +23,18 @@ struct Line{
 };
 
 struct Triangle{
+
+    vec3 normal() const;
+    vec4 topPoint() const;
+    bool inside(const vec4&p) const;
+    void extremeValue(vec2 &_min, vec2 &_max) const;
+    void intersect(float y,float min_x,float max_x, std::set<float> &result);
+
     vec4 p1;
     vec4 p2;
     vec4 p3;
     bool backFacing;
 
-    /*
-     *  algo: www.cnblogs.com/graphics/archive/2010/08/05/1793393.html
-     */
-    bool inside(const vec4&p) const{
-        vec3 v0(p3 - p1);
-        vec3 v1(p2 - p1);
-        vec3 v2(p - p1);
-
-        float dot00 = glm::dot(v0,v0);
-        float dot01 = glm::dot(v0,v1);
-        float dot02 = glm::dot(v0,v2);
-        float dot11 = glm::dot(v1,v1);
-        float dot12 = glm::dot(v1,v2);
-
-        float inverDeno = 1 / (dot00 * dot11 - dot01 * dot01) ;
-
-        float u = (dot11 * dot02 - dot01 * dot12) * inverDeno ;
-        // if u out of range, return directly
-        if (u < 0 || u > 1)
-        {
-            return false ;
-        }
-
-        float v = (dot00 * dot12 - dot01 * dot02) * inverDeno ;
-        // if v out of range, return directly
-        if (v < 0 || v > 1)
-        {
-            return false ;
-        }
-        return u + v <= 1 ;
-    }
 };
 
 class Primitive

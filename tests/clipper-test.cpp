@@ -23,9 +23,7 @@ int main(){
 
     Triangle *data;
     GPUMemory::alloc<Triangle>(Constant::SF_PRIMITIVESETUPOUT,3,data);
-//    data[0] = glm::vec4(0.5f,0.5f,0.5f,1.0f);
-//    data[1] = glm::vec4(-1.0f,0.5f,1.0f,1.0f);
-//    data[2] = glm::vec4(1.0f,0.5f,2.0f,1.0f);
+
 
     SHClipper clipper;
 //    clipper.execute();

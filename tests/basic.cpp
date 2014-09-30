@@ -36,10 +36,11 @@ int main()
     while(window.isOpen()){
 
         sf::Event event;
-        glDrawPixels(width,height,GL_RGB,GL_FLOAT,pl.getColorBuffer());
+
 
         while(window.pollEvent(event)){
             if(event.type == sf::Event::MouseButtonPressed){
+
                 int x = event.mouseButton.x;
                 int y = event.mouseButton.y;
 
@@ -65,9 +66,10 @@ int main()
                 glViewport(0, 0, event.size.width, event.size.height);
             }
 
+            glDrawPixels(width,height,GL_RGB,GL_FLOAT,pl.getColorBuffer());
+            window.display();
         }
 
-        window.display();
         //float fps = 1.f / clock.getElapsedTime().asSeconds();
         //std::cout << "fps" << fps << std::endl;
         //clock.restart();

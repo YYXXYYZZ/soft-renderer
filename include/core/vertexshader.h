@@ -28,7 +28,7 @@ private:
     glm::mat4 MVP;
     data_info<float> _positions;
     data_info<float> _color;
-    data_info<glm::vec4> _out;
+    data_info<glm::vec4> _glposition;
 };
 
 #endif // VERTEXSHADER_H

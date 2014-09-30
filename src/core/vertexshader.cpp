@@ -90,31 +90,83 @@ void VertexShader::initialize()
 
     float color[] =
     {
-        0.0f,0.1f,0.5f,
-        0.4f,0.3f,0.2f,
-        0.1f,0.4f,0.3f
+       // front
+       0.72,0.64,0.33,
+       0.91,0.24,0.67,
+       0.12f,0.99f,0.34f,
+
+       0.12f,0.99f,0.34f,
+       0.91,0.24,0.67,
+       0.4f,0.6f,0.77f,
+       // left
+       0.4f,0.3f,0.2f,
+       0.2f,0.25f,0.03f,
+       0.72,0.64,0.33,
+
+       0.72,0.64,0.33,
+       0.2f,0.25f,0.03f,
+       0.91,0.24,0.67,
+       // right
+       0.12f,0.99f,0.34f,
+       0.4f,0.6f,0.77f,
+       0.0f,0.1f,0.5f,
+
+       0.0f,0.1f,0.5f,
+       0.4f,0.6f,0.77f,
+       0.1f,0.4f,0.3f,
+
+       // back
+       0.0f,0.1f,0.5f,
+       0.1f,0.4f,0.3f,
+       0.4f,0.3f,0.2f,
+
+       0.4f,0.3f,0.2f,
+       0.1f,0.4f,0.3f,
+       0.2f,0.25f,0.03f,
+       // top
+       0.91,0.24,0.67,
+       0.2f,0.25f,0.03f,
+       0.4f,0.6f,0.77f,
+
+       0.4f,0.6f,0.77f,
+       0.2f,0.25f,0.03f,
+       0.1f,0.4f,0.3f,
+       // bottom
+       0.4f,0.3f,0.2f,
+       0.72,0.64,0.33,
+       0.0f,0.1f,0.5f,
+
+       0.0f,0.1f,0.5f,
+       0.72,0.64,0.33,
+       0.4f,0.6f,0.77f
     };
 
-    GPUMemory::alloc<float>("positions",sizeof(positions)/sizeof(float),_positions.data);
-    GPUMemory::alloc<float>("color",9,_color.data);
-    GPUMemory::alloc<glm::vec4>(Constant::SF_POSITION,sizeof(positions)/sizeof(float),_out.data);
+    GPUMemory::alloc("positions",sizeof(positions)/sizeof(float),_positions.data);
+    GPUMemory::alloc("color",sizeof(color)/sizeof(float),_color.data);
 
-    GPUMemory::memoryCopy<float>("positions",sizeof(positions)/sizeof(float),positions);
-    GPUMemory::memoryCopy<float>("color",9,color);
+
+    GPUMemory::memoryCopy("positions",sizeof(positions)/sizeof(float),positions);
+    GPUMemory::memoryCopy("color",sizeof(color)/sizeof(float),color);
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::rotate(model,-45.0f,glm::vec3(0,1,0));
-    model = glm::rotate(model,45.0f,glm::vec3(1,0,0));
+    model = glm::rotate(model,-45.0f,glm::vec3(1,0,0));
     glm::mat4 view = glm::lookAt(glm::vec3(0.0f,0.0f,1.0f),
                                  glm::vec3(1.0f,1.0f,1.0f),
                                  glm::vec3(0.0f,1.0f,0.0f));
     glm::mat4 projection = glm::perspective(60.0f, (float)w/h, 0.3f, 100.0f);
 
-    MVP = /*projection * view **/ model;
+    MVP = /*projection * view * */model;
+
+    GPUMemory::alloc(Constant::SF_POSITION,sizeof(positions)/sizeof(float),_glposition.data);
 
 }
 
-
+/**
+ * @brief VertexShader::iterationCompute
+ *        for each vertex
+ * @param step
+ */
 void VertexShader::iterationCompute(int step)
 {
     glm::vec4 pos(_positions.data[step*3],
@@ -123,7 +175,7 @@ void VertexShader::iterationCompute(int step)
                   1);
 
     pos = MVP * pos;
-    _out.data[step] = pos;
+    _glposition.data[step] = pos;
 }
 
 int VertexShader::iterationTimes()

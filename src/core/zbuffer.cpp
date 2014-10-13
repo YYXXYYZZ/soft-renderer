@@ -90,8 +90,8 @@ void ZBuffer::execute()
 
         // attention: initial zValue in normalized coordinate
         // find that point
-        glm::vec4 topPoint = originalTri.topPoint();
-        const float zValue = topPoint.z;
+        glm::vec4 downPoint = originalTri.downPoint();
+        const float zValue = downPoint.z;
         const float deltaZX = - normal.x/normal.z;
         const float deltaZY = - normal.y/normal.z;
 
@@ -99,7 +99,11 @@ void ZBuffer::execute()
 
         // TODO parallel
         // attention: scan line operate on window coordinate
-        for (float scanLine = min.y; scanLine <= max.y; ++scanLine) {
+        // form low y to high y(bottom to up)
+        for (float scanLine = round(min.y); scanLine <= round(max.y); ++scanLine) {
+
+            if(scanLine == 427.0f)
+                std::cout << "sad\n";
 
             // z' = z + B/C*delta
             float z = zValue + deltaZY*(scanLine-min.y);
@@ -124,7 +128,7 @@ void ZBuffer::execute()
 
                 // TODO: parallel
                 // for each pixel between point
-                for (float x = begin; x < end; ++x) {
+                for (float x = begin; x <= end; ++x) {
                     float zResult = z + deltaZX * (x-min.x);
                     processBuffer(x,scanLine,zResult);
                 }

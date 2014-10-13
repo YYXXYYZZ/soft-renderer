@@ -139,7 +139,7 @@ vec4 SHClipper::intersect(vec4 p1,vec4 p2, Boundary b)
         result.x = -1.0f;
         result.y = p1.y + u*(p2.y-p1.y);
         result.z = p1.z + u*(p2.z-p1.z);
-        result.w = 1.0f;
+        result.w = p1.w + u*(p2.w-p1.w);
     }
         break;
     case Right:{
@@ -147,7 +147,7 @@ vec4 SHClipper::intersect(vec4 p1,vec4 p2, Boundary b)
         result.x = 1.0f;
         result.y = p1.y + u*(p2.y-p1.y);
         result.z = p1.z + u*(p2.z-p1.z);
-        result.w = 1.0f;
+        result.w = p1.w + u*(p2.w-p1.w);
     }
         break;
     case Bottom:{
@@ -155,7 +155,7 @@ vec4 SHClipper::intersect(vec4 p1,vec4 p2, Boundary b)
         result.x = p1.x + u*(p2.x-p1.x);
         result.y = -1.0f;
         result.z = p1.z + u*(p2.z-p1.z);
-        result.w = 1.0f;
+        result.w = p1.w + u*(p2.w-p1.w);
     }
         break;
     case Top:{
@@ -163,7 +163,7 @@ vec4 SHClipper::intersect(vec4 p1,vec4 p2, Boundary b)
         result.x = p1.x + u*(p2.x-p1.x);
         result.y = 1.0f;
         result.z = p1.z + u*(p2.z-p1.z);
-        result.w = 1.0f;
+        result.w = p1.w + u*(p2.w-p1.w);
     }
         break;
     case Near:{
@@ -171,7 +171,7 @@ vec4 SHClipper::intersect(vec4 p1,vec4 p2, Boundary b)
         result.x = p1.x + u*(p2.x-p1.x);
         result.y = p1.y + u*(p2.y-p1.y);
         result.z = 1.0f;
-        result.w = 1.0f;
+        result.w = p1.w + u*(p2.w-p1.w);
     }
         break;
     case Far:{
@@ -179,7 +179,7 @@ vec4 SHClipper::intersect(vec4 p1,vec4 p2, Boundary b)
         result.x = p1.x + u*(p2.x-p1.x);
         result.y = p1.y + u*(p2.y-p1.y);
         result.z = -1.0f;
-        result.w = 1.0f;
+        result.w = p1.w + u*(p2.w-p1.w);
     }
         break;
     default:

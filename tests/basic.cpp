@@ -10,7 +10,7 @@ using namespace std;
 int main()
 {
 
-    int width = 800;
+    int width = 600;
     int height = 600;
 
     sf::RenderWindow window(sf::VideoMode(width,height),"soft-renderer");
@@ -52,6 +52,9 @@ int main()
                 cout << "g: " << (int)pixels[1] << endl;
                 cout << "b: " << (int)pixels[2] << endl;
                 cout << "a: " << (int)pixels[3] << endl;
+                cout << endl;
+                cout << "x: " << x << endl;
+                cout << "y: " << 800-y << endl;
                 cout << endl;
 
             }

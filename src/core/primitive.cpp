@@ -121,6 +121,12 @@ void Triangle::extremeValue(glm::vec2 &_min, glm::vec2 &_max) const
     _max.y = yMax;
 }
 
+inline bool between(float low,float high,float vaule){
+    if (vaule >=low && vaule <= high)
+            return true;
+    return false;
+}
+
 /**
  * @brief Triangle::intersect this triangle
  *        intersect with line y=c
@@ -129,27 +135,48 @@ void Triangle::extremeValue(glm::vec2 &_min, glm::vec2 &_max) const
  */
 void Triangle::intersect(float y,float min_x,float max_x, std::set<float> &result)
 {
-    if (p2.y!=p1.y){
+    float y1;
+    float y2;
+    float y3;
+
+    //1
+    y1 = p1.y;
+    y2 = p2.y;
+    if(y1 > y2)
+        std::swap(y1,y2);
+
+    if (between(y1,y2,y) && p2.y!=p1.y){
         float u1 = (y-p1.y)/(p2.y-p1.y);
         float x;
         x= p1.x + u1*(p2.x-p1.x);
-        if(x>=min_x && x<=max_x)
+        if(between(min_x,max_x,x))
             result.insert(x);
     }
 
-    if (p3.y!=p1.y){
+    //2
+    y1 = p1.y;
+    y3 = p3.y;
+    if(y1 > y3)
+        std::swap(y1,y3);
+
+    if (between(y1,y3,y) && p3.y!=p1.y){
         float u2 = (y-p1.y)/(p3.y-p1.y);
         float x;
         x= p1.x + u2*(p3.x-p1.x);
-        if(x>=min_x && x<=max_x)
+        if(between(min_x,max_x,x))
             result.insert(x);
     }
 
-    if (p3.y!=p2.y){
+    //3
+    y2 = p2.y;
+    y3 = p3.y;
+    if(y2 > y3)
+        std::swap(y2,y3);
+    if (between(y2,y3,y) && p3.y!=p2.y){
         float u3 = (y-p2.y)/(p3.y-p2.y);
         float x;
         x= p2.x + u3*(p3.x-p2.x);
-        if(x>=min_x && x<=max_x)
+        if(between(min_x,max_x,x))
             result.insert(x);
     }
 }
@@ -162,7 +189,7 @@ glm::vec3 Triangle::normal() const
     return normal;
 }
 
-glm::vec4 Triangle::topPoint() const
+glm::vec4 Triangle::downPoint() const
 {
     glm::vec4 p;
 

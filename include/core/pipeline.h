@@ -14,7 +14,6 @@ class ZBuffer;
 class Culler;
 class Clipper;
 class FrameBuffer;
-class vec3;
 
 class Pipeline
 {

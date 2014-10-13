@@ -150,13 +150,14 @@ void VertexShader::initialize()
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::rotate(model,-45.0f,glm::vec3(0,1,0));
+    model = glm::translate(model,glm::vec3(0.28f,0.0f,0.0f));
     model = glm::rotate(model,-45.0f,glm::vec3(1,0,0));
     glm::mat4 view = glm::lookAt(glm::vec3(0.0f,0.0f,1.0f),
-                                 glm::vec3(1.0f,1.0f,1.0f),
+                                 glm::vec3(0.0f,0.0f,0.0f),
                                  glm::vec3(0.0f,1.0f,0.0f));
     glm::mat4 projection = glm::perspective(60.0f, (float)w/h, 0.3f, 100.0f);
 
-    MVP = /*projection * view * */model;
+    MVP = /*projection *view * */ model;
 
     GPUMemory::alloc(Constant::SF_POSITION,sizeof(positions)/sizeof(float),_glposition.data);
 

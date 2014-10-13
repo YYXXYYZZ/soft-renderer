@@ -25,7 +25,7 @@ struct Line{
 struct Triangle{
 
     vec3 normal() const;
-    vec4 topPoint() const;
+    vec4 downPoint() const;
     bool inside(const vec4&p) const;
     void extremeValue(vec2 &_min, vec2 &_max) const;
     void intersect(float y,float min_x,float max_x, std::set<float> &result);

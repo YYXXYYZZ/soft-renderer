@@ -12,6 +12,8 @@ struct data_info{
     int size;
 };
 
+class Vertex;
+
 class VertexShader : public Shader
 {
 public:
@@ -25,12 +27,14 @@ protected:
 private:
 
     int w = 800;
-    int h = 600;
+    int h = 800;
 
     glm::mat4 MVP;
     data_info<float> _positions;
     data_info<float> _color;
     data_info<glm::vec4> _glposition;
+
+    Vertex *vertices;
 };
 
 #endif // VERTEXSHADER_H

@@ -1,6 +1,7 @@
 #include "core/vertexshader.h"
 #include "core/gpumemory.h"
 #include "core/constant.h"
+#include "core/vertex.h"
 
 VertexShader::VertexShader()
 {
@@ -141,26 +142,25 @@ void VertexShader::initialize()
        0.4f,0.6f,0.77f
     };
 
+    int vertexCount = sizeof(positions)/sizeof(float)/3;
+    GPUMemory::alloc(Constant::SF_POSITION,vertexCount,vertices);
+
     GPUMemory::alloc("positions",sizeof(positions)/sizeof(float),_positions.data);
     GPUMemory::alloc("color",sizeof(color)/sizeof(float),_color.data);
-
 
     GPUMemory::memoryCopy("positions",sizeof(positions)/sizeof(float),positions);
     GPUMemory::memoryCopy("color",sizeof(color)/sizeof(float),color);
 
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::rotate(model,-45.0f,glm::vec3(0,1,0));
-    model = glm::translate(model,glm::vec3(0.28f,0.0f,0.0f));
-    model = glm::rotate(model,-45.0f,glm::vec3(1,0,0));
-    glm::mat4 view = glm::lookAt(glm::vec3(0.0f,0.0f,1.0f),
+//    model = glm::translate(model,glm::vec3(0.5f,0.0f,0.0f));
+    model = glm::rotate(model,-45.0f,glm::vec3(1,1,1));
+    glm::mat4 view = glm::lookAt(glm::vec3(0.0f,0.0f,0.9f),
                                  glm::vec3(0.0f,0.0f,0.0f),
                                  glm::vec3(0.0f,1.0f,0.0f));
     glm::mat4 projection = glm::perspective(60.0f, (float)w/h, 0.3f, 100.0f);
+    glm::mat4 orthprojection = glm::ortho( -1.f, 1.f, -1.f, 1.f, -1.f, 1.f );
 
-    MVP = /*projection *view * */ model;
-
-    GPUMemory::alloc(Constant::SF_POSITION,sizeof(positions)/sizeof(float),_glposition.data);
-
+    MVP = /*orthprojection *view * */ model;
 }
 
 /**
@@ -176,7 +176,7 @@ void VertexShader::iterationCompute(int step)
                   1);
 
     pos = MVP * pos;
-    _glposition.data[step] = pos;
+    vertices[step].pos = pos;
 }
 
 int VertexShader::iterationTimes()

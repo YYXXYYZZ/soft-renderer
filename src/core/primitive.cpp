@@ -1,6 +1,7 @@
-#include <core/primitive.h>
-#include <core/gpumemory.h>
-#include <core/constant.h>
+#include "core/primitive.h"
+#include "core/gpumemory.h"
+#include "core/constant.h"
+#include "core/vertex.h"
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -13,9 +14,9 @@ Primitive::Primitive()
 
 bool Primitive::setup(PrimitiveType type, int count)
 {
-    bool error = GPUMemory::retrieve<vec4>(Constant::SF_POSITION,
-                                           positionSize,
-                                           positionData);
+    bool error = GPUMemory::retrieve(Constant::SF_POSITION,
+                                             vertexCount,
+                                             verteices);
     if(!error){
         std::cerr << "Retrieve sf_position failed!" << std::endl;
         return false;
@@ -24,16 +25,16 @@ bool Primitive::setup(PrimitiveType type, int count)
     switch (type) {
     case TRIANGLES:{
         Triangle* objects;
-        int size = count < positionSize ? count : positionSize;
+        int size = count < vertexCount ? count : vertexCount;
         size = size/3;
-        GPUMemory::alloc<Triangle>(Constant::SF_PRIMITIVESETUPOUT,
-                                   size,
-                                   objects);
+        GPUMemory::alloc(Constant::SF_PRIMITIVESETUPOUT,
+                         size,
+                         objects);
         //TODO parallel
         for (int i = 0; i < size; i++) {
-            objects[i].p1 = positionData[i*3];
-            objects[i].p2 = positionData[i*3+1];
-            objects[i].p3 = positionData[i*3+2];
+            objects[i].p1 = verteices[i*3].pos;
+            objects[i].p2 = verteices[i*3+1].pos;
+            objects[i].p3 = verteices[i*3+2].pos;
         }
     }
         break;
@@ -46,12 +47,12 @@ bool Primitive::setup(PrimitiveType type, int count)
 
 bool Primitive::setupByIndex(PrimitiveType type, int count)
 {
-    bool error = GPUMemory::retrieve<glm::vec4>(Constant::SF_POSITION,positionSize,positionData);
+    bool error = GPUMemory::retrieve(Constant::SF_POSITION,vertexCount,verteices);
     if(!error){
         std::cerr << "Retrieve sf_position failed!\n";
         return false;
     }
-    error = GPUMemory::retrieve<int>(Constant::SF_POSITIONINDEX,indexSize,indexData);
+    error = GPUMemory::retrieve(Constant::SF_POSITIONINDEX,indexSize,indexData);
     if(!error){
         std::cerr << "Retrieve sf_position_index failed!\n";
         return false;
@@ -123,7 +124,7 @@ void Triangle::extremeValue(glm::vec2 &_min, glm::vec2 &_max) const
 
 inline bool between(float low,float high,float vaule){
     if (vaule >=low && vaule <= high)
-            return true;
+        return true;
     return false;
 }
 

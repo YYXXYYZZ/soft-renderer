@@ -6,6 +6,7 @@
 using glm::vec4;
 using glm::vec3;
 using glm::vec2;
+class Vertex;
 
 enum PrimitiveType{
     POINTS,
@@ -45,8 +46,8 @@ public:
     bool setupByIndex(PrimitiveType type,int count);
 
 private:
-    vec4 *positionData;
-    int   positionSize;
+    Vertex *verteices;
+    int   vertexCount;
     int  *indexData;
     int   indexSize;
 };

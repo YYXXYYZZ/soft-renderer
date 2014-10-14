@@ -3,38 +3,23 @@
 
 #include "core/shader.h"
 
-
-#include <glm/gtc/matrix_transform.hpp>
-
-template<class T>
-struct data_info{
-    T *data;
-    int size;
-};
-
-class Vertex;
-
+class PointObject;
 class VertexShader : public Shader
 {
 public:
     VertexShader();
-
 protected:
-
     void initialize();
     void iterationCompute(int step);
     int iterationTimes();
 private:
-
     int w = 800;
     int h = 800;
 
-    glm::mat4 MVP;
-    data_info<float> _positions;
-    data_info<float> _color;
-    data_info<glm::vec4> _glposition;
+    float* _positions;
+    float* _color;
 
-    Vertex *vertices;
+    PointObject *vertices;
 };
 
 #endif // VERTEXSHADER_H

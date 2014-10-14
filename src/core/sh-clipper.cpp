@@ -23,12 +23,12 @@ void SHClipper::Sutherland_Hodgman()
     // clip each primitive
     for (int i = 0; i < primitiveCount; ++i) {
 
-        vector<vec4> *input = new vector<glm::vec4>;
+        vector<Poin> *input = new vector<glm::vec4>;
         vector<vec4> *output = new vector<glm::vec4>;
 
-        input->push_back(triangle[i].p1);
-        input->push_back(triangle[i].p2);
-        input->push_back(triangle[i].p3);
+        input->push_back(triangle[i].p1.pos);
+        input->push_back(triangle[i].p2.pos);
+        input->push_back(triangle[i].p3.pos);
 
         for (int b = Left; b <= Far; ++b) {
             clip(*input,*output,static_cast<Boundary>(b));
@@ -42,9 +42,9 @@ void SHClipper::Sutherland_Hodgman()
 
         if (input->size()==3) {
             Triangle tri;
-            tri.p1 = input->at(0);
-            tri.p2 = input->at(1);
-            tri.p3 = input->at(2);
+            tri.p1.pos = input->at(0);
+            tri.p2.pos = input->at(1);
+            tri.p3.pos = input->at(2);
             outPrimitive.push_back(tri);
         }
         // size less than 3?
@@ -198,9 +198,9 @@ void SHClipper::polygonToTriangle(vector<vec4> inPolygon,
 {
     if(inPolygon.size()==3){
         Triangle tri;
-        tri.p1 = inPolygon[0];
-        tri.p2 = inPolygon[1];
-        tri.p3 = inPolygon[2];
+        tri.p1.pos = inPolygon[0];
+        tri.p2.pos = inPolygon[1];
+        tri.p3.pos = inPolygon[2];
         out.push_back(tri);
         return;
     }
@@ -234,9 +234,9 @@ void SHClipper::polygonToTriangle(vector<vec4> inPolygon,
 
     // target triangle
     Triangle tri;
-    tri.p1 = *left;
-    tri.p2 = *middle;
-    tri.p3 = *right;
+    tri.p1.pos = *left;
+    tri.p2.pos = *middle;
+    tri.p3.pos = *right;
 
     vector<vec4> polygon;
     // check other point inside

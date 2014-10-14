@@ -1,5 +1,5 @@
 #include "core/vertex.h"
-
+#include <cstring>
 
 template<class T>
 T interpolatePrivate(const T&v1,const T&v2,float alpha)
@@ -58,80 +58,124 @@ vec4 interpolatePrivate<vec4>(const vec4&v1,const vec4&v2,float alpha)
 }
 
 
-void Attachment::addInt(const std::string &name, const int &v)
+
+PointObject::PointObject()
 {
-    v_int.insert(make_pair(name,v));
+    attach = new Attachment;
 }
 
-void Attachment::addFloat(const std::string &name, const float &v)
+PointObject::~PointObject()
 {
-    v_float.insert(make_pair(name,v));
+    delete attach;
 }
 
-void Attachment::addVec2(const std::string &name, const glm::vec2 &v)
+PointObject &PointObject::operator=(const PointObject &other)
 {
-    v_vec2.insert(make_pair(name,v));
+    attach->v_int = other.attach->v_int;
+    attach->v_float = other.attach->v_float;
+    attach->v_vec2 = other.attach->v_vec2;
+    attach->v_vec3 = other.attach->v_vec3;
+    attach->v_vec4 = other.attach->v_vec4;
 }
 
-void Attachment::addVec3(const std::string &name, const glm::vec3 &v)
+void PointObject::setAttachInt(const std::string &name, const int &v)
 {
-    v_vec3.insert(make_pair(name,v));
+    attach->v_int.insert(make_pair(name,v));
 }
 
-void Attachment::addVec4(const std::string &name, const glm::vec4 &v)
+void PointObject::setAttachFloat(const std::string &name, const float &v)
 {
-    v_vec4.insert(make_pair(name,v));
+    attach->v_float.insert(make_pair(name,v));
 }
 
-Attachment *Attachment::interpolate(Attachment *v, float alpha)
+void PointObject::setAttachVec2(const std::string &name, const glm::vec2 &v)
 {
+    attach->v_vec2.insert(make_pair(name,v));
+}
 
-    assert(v_int.size() == v->v_int.size());
-    assert(v_float.size() == v->v_float.size());
-    assert(v_vec2.size() == v->v_vec2.size());
-    assert(v_vec3.size() == v->v_vec3.size());
-    assert(v_vec4.size() == v->v_vec4.size());
+void PointObject::setAttachVec3(const std::string &name, const glm::vec3 &v)
+{
+    attach->v_vec3.insert(make_pair(name,v));
+}
 
-    Attachment *result = new Attachment;
+void PointObject::setAttachVec4(const std::string &name, const glm::vec4 &v)
+{
+    attach->v_vec4.insert(make_pair(name,v));
+}
 
-    for (auto i = v_int.begin(); i != v_int.end(); ++i) {
+int PointObject::getAttachInt(const std::string &name)
+{
+    return attach->v_int[name];
+}
+
+float PointObject::getAttachFloat(const std::string &name)
+{
+    return attach->v_float[name];
+}
+
+glm::vec2 PointObject::getAttachVec2(const std::string &name)
+{
+    return attach->v_vec2[name];
+}
+
+glm::vec3 PointObject::getAttachVec3(const std::string &name)
+{
+    return attach->v_vec3[name];
+}
+
+glm::vec4 PointObject::getAttachVec4(const std::string &name)
+{
+    return attach->v_vec4[name];
+}
+
+PointObject PointObject::interpolate(const PointObject &v, float alpha) const
+{
+    assert(attach->v_int.size() == v.attach->v_int.size());
+    assert(attach->v_float.size() == v.attach->v_float.size());
+    assert(attach->v_vec2.size() == v.attach->v_vec2.size());
+    assert(attach->v_vec3.size() == v.attach->v_vec3.size());
+    assert(attach->v_vec4.size() == v.attach->v_vec4.size());
+
+    PointObject result;
+
+    for (auto i = attach->v_int.begin(); i != attach->v_int.end(); ++i) {
         string name = i->first;
-        auto vaule = interpolatePrivate(v_int.at(name),
-                                    v->v_int.at(name),
-                                    alpha);
-        result->addInt(name,vaule);
+        auto vaule = interpolatePrivate(attach->v_int.at(name),
+                                        v.attach->v_int.at(name),
+                                        alpha);
+        result.setAttachInt(name,vaule);
     }
 
-    for (auto i = v_float.begin(); i != v_float.end(); ++i) {
+    for (auto i = attach->v_float.begin(); i != attach->v_float.end(); ++i) {
         string name = i->first;
-        auto vaule = interpolatePrivate(v_float.at(name),
-                                    v->v_float.at(name),
-                                    alpha);
-        result->addFloat(name,vaule);
+        auto vaule = interpolatePrivate(attach->v_float.at(name),
+                                        v.attach->v_float.at(name),
+                                        alpha);
+        result.setAttachFloat(name,vaule);
     }
 
-    for (auto i = v_vec2.begin(); i != v_vec2.end(); ++i) {
+    for (auto i = attach->v_vec2.begin(); i != attach->v_vec2.end(); ++i) {
         string name = i->first;
-        auto vaule = interpolatePrivate(v_vec2.at(name),
-                                    v->v_vec2.at(name),
-                                    alpha);
-        result->addVec2(name,vaule);
+        auto vaule = interpolatePrivate(attach->v_vec2.at(name),
+                                        v.attach->v_vec2.at(name),
+                                        alpha);
+        result.setAttachVec2(name,vaule);
     }
 
-    for (auto i = v_vec3.begin(); i != v_vec3.end(); ++i) {
+    for (auto i = attach->v_vec3.begin(); i != attach->v_vec3.end(); ++i) {
         string name = i->first;
-        auto vaule = interpolatePrivate(v_vec3.at(name),
-                                    v->v_vec3.at(name),
-                                    alpha);
-        result->addVec3(name,vaule);
+        auto vaule = interpolatePrivate(attach->v_vec3.at(name),
+                                        v.attach->v_vec3.at(name),
+                                        alpha);
+        result.setAttachVec3(name,vaule);
     }
 
-    for (auto i = v_vec4.begin(); i != v_vec4.end(); ++i) {
+    for (auto i = attach->v_vec4.begin(); i != attach->v_vec4.end(); ++i) {
         string name = i->first;
-        auto vaule = interpolatePrivate(v_vec4.at(name),
-                                    v->v_vec4.at(name),
-                                    alpha);
-        result->addVec4(name,vaule);
+        auto vaule = interpolatePrivate(attach->v_vec4.at(name),
+                                        v.attach->v_vec4.at(name),
+                                        alpha);
+        result.setAttachVec4(name,vaule);
     }
 
     return result;

@@ -11,9 +11,9 @@ using namespace std;
 ostream & operator <<(ostream &os,const Triangle &t){
 
     os << "========================\n";
-    os << t.p1[0] <<" " << t.p1[1] << " " << t.p1[2] << endl;
-    os << t.p2[0] <<" " << t.p2[1] << " " << t.p2[2] << endl;
-    os << t.p3[0] <<" " << t.p3[1] << " " << t.p3[2] << endl;
+    os << t.p1.pos[0] <<" " << t.p1.pos[1] << " " << t.p1.pos[2] << endl;
+    os << t.p2.pos[0] <<" " << t.p2.pos[1] << " " << t.p2.pos[2] << endl;
+    os << t.p3.pos[0] <<" " << t.p3.pos[1] << " " << t.p3.pos[2] << endl;
     os << "========================\n";
     return os;
 }

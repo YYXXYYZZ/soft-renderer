@@ -3,40 +3,45 @@
 #include "core/constant.h"
 #include "core/vertex.h"
 
+#include <glm/gtc/matrix_transform.hpp>
+
+glm::mat4 MVP;
+int times;
+
 VertexShader::VertexShader()
 {
 }
-int times;
+
 void VertexShader::initialize()
 {
     static float A[3]={
-      0.5,0.5,-0.5
+        0.5,0.5,-0.5
     };
     static float B[3]={
-      -0.5,0.5,-0.5
+        -0.5,0.5,-0.5
     };
     static float C[3]={
-      0.5,-0.5,-0.5
+        0.5,-0.5,-0.5
     };
     static float D[3]={
-      -0.5,-0.5,-0.5
+        -0.5,-0.5,-0.5
     };
     static float E[3]={
-      0.5,-0.5,0.5
+        0.5,-0.5,0.5
     };
     static float F[3]={
-      0.5,0.5,0.5
+        0.5,0.5,0.5
     };
     static float G[3]={
-      -0.5,0.5,0.5
+        -0.5,0.5,0.5
     };
     static float H[3]={
-      -0.5,-0.5,0.5
+        -0.5,-0.5,0.5
     };
 
     static float positions[] =
     {
-       // front
+        // front
         G[0],G[1],G[2],
         H[0],H[1],H[2],
         F[0],F[1],F[2],
@@ -89,70 +94,70 @@ void VertexShader::initialize()
 
     times = sizeof(positions)/sizeof(float)/3;
 
-    float color[] =
+    static float color[] =
     {
-       // front
-       0.72,0.64,0.33,
-       0.91,0.24,0.67,
-       0.12f,0.99f,0.34f,
+        // front
+        0.72,0.64,0.33,
+        0.91,0.24,0.67,
+        0.12f,0.99f,0.34f,
 
-       0.12f,0.99f,0.34f,
-       0.91,0.24,0.67,
-       0.4f,0.6f,0.77f,
-       // left
-       0.4f,0.3f,0.2f,
-       0.2f,0.25f,0.03f,
-       0.72,0.64,0.33,
+        0.12f,0.99f,0.34f,
+        0.91,0.24,0.67,
+        0.4f,0.6f,0.77f,
+        // left
+        0.4f,0.3f,0.2f,
+        0.2f,0.25f,0.03f,
+        0.72,0.64,0.33,
 
-       0.72,0.64,0.33,
-       0.2f,0.25f,0.03f,
-       0.91,0.24,0.67,
-       // right
-       0.12f,0.99f,0.34f,
-       0.4f,0.6f,0.77f,
-       0.0f,0.1f,0.5f,
+        0.72,0.64,0.33,
+        0.2f,0.25f,0.03f,
+        0.91,0.24,0.67,
+        // right
+        0.12f,0.99f,0.34f,
+        0.4f,0.6f,0.77f,
+        0.0f,0.1f,0.5f,
 
-       0.0f,0.1f,0.5f,
-       0.4f,0.6f,0.77f,
-       0.1f,0.4f,0.3f,
+        0.0f,0.1f,0.5f,
+        0.4f,0.6f,0.77f,
+        0.1f,0.4f,0.3f,
 
-       // back
-       0.0f,0.1f,0.5f,
-       0.1f,0.4f,0.3f,
-       0.4f,0.3f,0.2f,
+        // back
+        0.0f,0.1f,0.5f,
+        0.1f,0.4f,0.3f,
+        0.4f,0.3f,0.2f,
 
-       0.4f,0.3f,0.2f,
-       0.1f,0.4f,0.3f,
-       0.2f,0.25f,0.03f,
-       // top
-       0.91,0.24,0.67,
-       0.2f,0.25f,0.03f,
-       0.4f,0.6f,0.77f,
+        0.4f,0.3f,0.2f,
+        0.1f,0.4f,0.3f,
+        0.2f,0.25f,0.03f,
+        // top
+        0.91,0.24,0.67,
+        0.2f,0.25f,0.03f,
+        0.4f,0.6f,0.77f,
 
-       0.4f,0.6f,0.77f,
-       0.2f,0.25f,0.03f,
-       0.1f,0.4f,0.3f,
-       // bottom
-       0.4f,0.3f,0.2f,
-       0.72,0.64,0.33,
-       0.0f,0.1f,0.5f,
+        0.4f,0.6f,0.77f,
+        0.2f,0.25f,0.03f,
+        0.1f,0.4f,0.3f,
+        // bottom
+        0.4f,0.3f,0.2f,
+        0.72,0.64,0.33,
+        0.0f,0.1f,0.5f,
 
-       0.0f,0.1f,0.5f,
-       0.72,0.64,0.33,
-       0.4f,0.6f,0.77f
+        0.0f,0.1f,0.5f,
+        0.72,0.64,0.33,
+        0.4f,0.6f,0.77f
     };
 
     int vertexCount = sizeof(positions)/sizeof(float)/3;
     GPUMemory::alloc(Constant::SF_POSITION,vertexCount,vertices);
 
-    GPUMemory::alloc("positions",sizeof(positions)/sizeof(float),_positions.data);
-    GPUMemory::alloc("color",sizeof(color)/sizeof(float),_color.data);
+    GPUMemory::alloc("positions",sizeof(positions)/sizeof(float),_positions);
+    GPUMemory::alloc("color",sizeof(color)/sizeof(float),_color);
 
     GPUMemory::memoryCopy("positions",sizeof(positions)/sizeof(float),positions);
     GPUMemory::memoryCopy("color",sizeof(color)/sizeof(float),color);
 
     glm::mat4 model = glm::mat4(1.0f);
-//    model = glm::translate(model,glm::vec3(0.5f,0.0f,0.0f));
+    //    model = glm::translate(model,glm::vec3(0.5f,0.0f,0.0f));
     model = glm::rotate(model,-45.0f,glm::vec3(1,1,1));
     glm::mat4 view = glm::lookAt(glm::vec3(0.0f,0.0f,0.9f),
                                  glm::vec3(0.0f,0.0f,0.0f),
@@ -170,13 +175,18 @@ void VertexShader::initialize()
  */
 void VertexShader::iterationCompute(int step)
 {
-    glm::vec4 pos(_positions.data[step*3],
-                  _positions.data[step*3+1],
-                  _positions.data[step*3+2],
-                  1);
+    glm::vec4 pos(_positions[step*3],
+            _positions[step*3+1],
+            _positions[step*3+2],
+            1);
+
+    glm::vec3 color(_color[step*3],
+            _color[step*3+1],
+            _color[step*3+2]);
 
     pos = MVP * pos;
     vertices[step].pos = pos;
+    vertices[step].setAttachVec3("color",color);
 }
 
 int VertexShader::iterationTimes()

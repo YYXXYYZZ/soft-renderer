@@ -69,7 +69,7 @@ void ZBuffer::execute()
         // view-port transformation
         Triangle tri= originalTri;
         for (int var = 0; var < 3; ++var) {
-            glm::vec4 &vert = *(&tri.p1+var);
+            glm::vec4 &vert = *(&tri.p1.pos+var);
 
             // perspective divide
             vert.x = vert.x / vert.w;
@@ -101,9 +101,6 @@ void ZBuffer::execute()
         // attention: scan line operate on window coordinate
         // form low y to high y(bottom to up)
         for (float scanLine = round(min.y); scanLine <= round(max.y); ++scanLine) {
-
-            if(scanLine == 427.0f)
-                std::cout << "sad\n";
 
             // z' = z + B/C*delta
             float z = zValue + deltaZY*(scanLine-min.y);

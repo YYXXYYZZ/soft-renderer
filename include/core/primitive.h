@@ -2,11 +2,11 @@
 #define PRIMITIVE_H
 #include <glm/glm.hpp>
 #include <set>
+#include "core/vertex.h"
 
 using glm::vec4;
 using glm::vec3;
 using glm::vec2;
-class Vertex;
 
 enum PrimitiveType{
     POINTS,
@@ -31,9 +31,9 @@ struct Triangle{
     void extremeValue(vec2 &_min, vec2 &_max) const;
     void intersect(float y,float min_x,float max_x, std::set<float> &result);
 
-    vec4 p1;
-    vec4 p2;
-    vec4 p3;
+    PointObject p1;
+    PointObject p2;
+    PointObject p3;
     bool backFacing;
 
 };
@@ -46,7 +46,7 @@ public:
     bool setupByIndex(PrimitiveType type,int count);
 
 private:
-    Vertex *verteices;
+    PointObject *verteices;
     int   vertexCount;
     int  *indexData;
     int   indexSize;

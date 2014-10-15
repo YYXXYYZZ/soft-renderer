@@ -4,12 +4,14 @@
 #include <glm/glm.hpp>
 #include <string>
 #include <map>
+#include <memory>
 
 using glm::vec4;
 using glm::vec3;
 using glm::vec2;
 using std::map;
 using std::string;
+using std::shared_ptr;
 
 struct Attachment{
     map<string,int> v_int;
@@ -27,9 +29,9 @@ class PointObject
 public:
     PointObject();
     ~PointObject();
+    PointObject(const PointObject&other);
     PointObject &operator=(const PointObject&other);
-
-    vec4 pos;
+    bool operator!=(const PointObject&other);
 
     // attachment
     void setAttachInt(const string &name,const int&v);
@@ -38,16 +40,26 @@ public:
     void setAttachVec3(const string &name,const vec3&v);
     void setAttachVec4(const string &name,const vec4&v);
 
-    int getAttachInt(const string &name);
-    float getAttachFloat(const string &name);
-    vec2 getAttachVec2(const string &name);
-    vec3 getAttachVec3(const string &name);
-    vec4 getAttachVec4(const string &name);
+    int getAttachInt(const string &name) const;
+    float getAttachFloat(const string &name) const;
+    vec2 getAttachVec2(const string &name) const;
+    vec3 getAttachVec3(const string &name) const;
+    vec4 getAttachVec4(const string &name) const;
 
     PointObject interpolate(const PointObject &v, float alpha) const;
 
+    void setPos(const vec4&v);
+    vec4 getPos() const;
+
 private:
-    Attachment *attach;
+    shared_ptr<Attachment> p_attach;
+    void detach();
+
+public:
+    float x;
+    float y;
+    float z;
+    float w;
 };
 
 #endif // VERTEX_H

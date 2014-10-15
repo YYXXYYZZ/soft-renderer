@@ -65,12 +65,12 @@ bool Primitive::setupByIndex(PrimitiveType type, int count)
 /*
  *  algo: www.cnblogs.com/graphics/archive/2010/08/05/1793393.html
  */
-bool Triangle::inside(const glm::vec4 &p) const
+bool Triangle::inside(const PointObject &p) const
 {
 
-    vec3 v0(p3.pos - p1.pos);
-    vec3 v1(p2.pos - p1.pos);
-    vec3 v2(p - p1.pos);
+    vec3 v0(p3.getPos() - p1.getPos());
+    vec3 v1(p2.getPos() - p1.getPos());
+    vec3 v2(p.getPos() - p1.getPos());
 
     float dot00 = glm::dot(v0,v0);
     float dot01 = glm::dot(v0,v1);
@@ -104,17 +104,17 @@ void Triangle::extremeValue(glm::vec2 &_min, glm::vec2 &_max) const
     float xMax;
     float yMax;
 
-    xMin = fmin(p1.pos.x,p2.pos.x);
-    xMin = fmin(xMin,p3.pos.x);
+    xMin = fmin(p1.getPos().x,p2.getPos().x);
+    xMin = fmin(xMin,p3.getPos().x);
 
-    yMin = fmin(p1.pos.y,p2.pos.y);
-    yMin = fmin(yMin,p3.pos.y);
+    yMin = fmin(p1.getPos().y,p2.getPos().y);
+    yMin = fmin(yMin,p3.getPos().y);
 
-    xMax = fmax(p1.pos.x,p2.pos.x);
-    xMax = fmax(xMax,p3.pos.x);
+    xMax = fmax(p1.getPos().x,p2.getPos().x);
+    xMax = fmax(xMax,p3.getPos().x);
 
-    yMax = fmax(p1.pos.y,p2.pos.y);
-    yMax = fmax(yMax,p3.pos.y);
+    yMax = fmax(p1.getPos().y,p2.getPos().y);
+    yMax = fmax(yMax,p3.getPos().y);
 
     _min.x = xMin;
     _min.y = yMin;
@@ -141,42 +141,42 @@ void Triangle::intersect(float y,float min_x,float max_x, std::set<float> &resul
     float y3;
 
     //1
-    y1 = p1.pos.y;
-    y2 = p2.pos.y;
+    y1 = p1.getPos().y;
+    y2 = p2.getPos().y;
     if(y1 > y2)
         std::swap(y1,y2);
 
-    if (between(y1,y2,y) && p2.pos.y!=p1.pos.y){
-        float u1 = (y-p1.pos.y)/(p2.pos.y-p1.pos.y);
+    if (between(y1,y2,y) && p2.getPos().y!=p1.getPos().y){
+        float u1 = (y-p1.getPos().y)/(p2.getPos().y-p1.getPos().y);
         float x;
-        x= p1.pos.x + u1*(p2.pos.x-p1.pos.x);
+        x= p1.getPos().x + u1*(p2.getPos().x-p1.getPos().x);
         if(between(min_x,max_x,x))
             result.insert(x);
     }
 
     //2
-    y1 = p1.pos.y;
-    y3 = p3.pos.y;
+    y1 = p1.getPos().y;
+    y3 = p3.getPos().y;
     if(y1 > y3)
         std::swap(y1,y3);
 
-    if (between(y1,y3,y) && p3.pos.y!=p1.pos.y){
-        float u2 = (y-p1.pos.y)/(p3.pos.y-p1.pos.y);
+    if (between(y1,y3,y) && p3.getPos().y!=p1.getPos().y){
+        float u2 = (y-p1.getPos().y)/(p3.getPos().y-p1.getPos().y);
         float x;
-        x= p1.pos.x + u2*(p3.pos.x-p1.pos.x);
+        x= p1.getPos().x + u2*(p3.getPos().x-p1.getPos().x);
         if(between(min_x,max_x,x))
             result.insert(x);
     }
 
     //3
-    y2 = p2.pos.y;
-    y3 = p3.pos.y;
+    y2 = p2.getPos().y;
+    y3 = p3.getPos().y;
     if(y2 > y3)
         std::swap(y2,y3);
-    if (between(y2,y3,y) && p3.pos.y!=p2.pos.y){
-        float u3 = (y-p2.pos.y)/(p3.pos.y-p2.pos.y);
+    if (between(y2,y3,y) && p3.getPos().y!=p2.getPos().y){
+        float u3 = (y-p2.getPos().y)/(p3.getPos().y-p2.getPos().y);
         float x;
-        x= p2.pos.x + u3*(p3.pos.x-p2.pos.x);
+        x= p2.getPos().x + u3*(p3.getPos().x-p2.getPos().x);
         if(between(min_x,max_x,x))
             result.insert(x);
     }
@@ -184,8 +184,8 @@ void Triangle::intersect(float y,float min_x,float max_x, std::set<float> &resul
 
 glm::vec3 Triangle::normal() const
 {
-    glm::vec3 v1(p2.pos-p1.pos);
-    glm::vec3 v2(p3.pos-p1.pos);
+    glm::vec3 v1(p2.getPos()-p1.getPos());
+    glm::vec3 v2(p3.getPos()-p1.getPos());
     glm::vec3 normal = glm::cross(v1,v2);
     return normal;
 }
@@ -194,8 +194,8 @@ glm::vec4 Triangle::downPoint() const
 {
     glm::vec4 p;
 
-    p = p1.pos.y < p2.pos.y ? p1.pos:p2.pos;
-    p = p.y < p3.pos.y ? p:p3.pos;
+    p = p1.getPos().y < p2.getPos().y ? p1.getPos():p2.getPos();
+    p = p.y < p3.getPos().y ? p:p3.getPos();
 
     return p;
 }

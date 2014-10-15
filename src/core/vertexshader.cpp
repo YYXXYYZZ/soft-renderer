@@ -185,7 +185,7 @@ void VertexShader::iterationCompute(int step)
             _color[step*3+2]);
 
     pos = MVP * pos;
-    vertices[step].pos = pos;
+    vertices[step].setPos(pos);
     vertices[step].setAttachVec3("color",color);
 }
 

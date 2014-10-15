@@ -12,9 +12,9 @@ using namespace glm;
 ostream & operator <<(ostream &os,const Triangle &t){
 
     os << "========================\n";
-    os << t.p1.pos[0] <<" " << t.p1.pos[1] << " " << t.p1.pos[2] << endl;
-    os << t.p2.pos[0] <<" " << t.p2.pos[1] << " " << t.p2.pos[2] << endl;
-    os << t.p3.pos[0] <<" " << t.p3.pos[1] << " " << t.p3.pos[2] << endl;
+    os << t.p1.getPos()[0] <<" " << t.p1.getPos()[1] << " " << t.p1.getPos()[2] << endl;
+    os << t.p2.getPos()[0] <<" " << t.p2.getPos()[1] << " " << t.p2.getPos()[2] << endl;
+    os << t.p3.getPos()[0] <<" " << t.p3.getPos()[1] << " " << t.p3.getPos()[2] << endl;
     os << "========================\n";
     return os;
 }
@@ -28,14 +28,27 @@ int main(){
     SHClipper clipper;
 //    clipper.execute();
 
-    vector<vec4> inPolygon;
+    vector<PointObject> inPolygon;
     vector<Triangle> out;
 
-    inPolygon.push_back(glm::vec4(-0.5f,-0.5f,0.0f,1.0f));
-    inPolygon.push_back(glm::vec4(0.5f,-0.5f,0.0f,1.0f));
-    inPolygon.push_back(glm::vec4(0.5f,0.5f,0.0f,1.0f));
-    inPolygon.push_back(glm::vec4(0.0f,0.0f,0.0f,1.0f));
-    inPolygon.push_back(glm::vec4(-0.5f,0.5f,0.0f,1.0f));
+    PointObject p;
+    p.setPos(glm::vec4(-0.5f,-0.5f,0.0f,1.0f));
+    inPolygon.push_back(p);
+
+    p.setPos(glm::vec4(0.5f,-0.5f,0.0f,1.0f));
+    p.setAttachInt("x",55555);
+    inPolygon.push_back(p);
+
+
+    p.setPos(glm::vec4(0.5f,0.5f,0.0f,1.0f));
+    inPolygon.push_back(p);
+
+    p.setPos(glm::vec4(glm::vec4(0.0f,0.0f,0.0f,1.0f)));
+    p.setAttachInt("xx6",5);
+    inPolygon.push_back(p);
+
+    p.setPos(glm::vec4(glm::vec4(-0.5f,0.5f,0.0f,1.0f)));
+    inPolygon.push_back(p);
 
 //    inPolygon.push_back(glm::vec4(0.0f,0.5f,0.0f,1.0f));
 //    inPolygon.push_back(glm::vec4(0.0f,-0.5f,0.0f,1.0f));
@@ -51,6 +64,10 @@ int main(){
         cout << out.at(var);
     }
 
-
+    cout << "2:"<<inPolygon[2].getAttachInt("xx6")<<endl;
+    cout << "2:"<<inPolygon[2].getAttachInt("x")<<endl;
+    cout << "3:"<<inPolygon[3].getAttachInt("xx6")<<endl;
+    cout << "4:"<<inPolygon[4].getAttachInt("xx6")<<endl;
+    cout << "4:"<<inPolygon[4].getAttachInt("x")<<endl;
     return 0;
 }

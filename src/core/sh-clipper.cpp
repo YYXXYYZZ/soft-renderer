@@ -1,6 +1,7 @@
 #include "core/sh-clipper.h"
 #include "core/gpumemory.h"
 #include "core/constant.h"
+#include "core/vertex.h"
 #include <algorithm>
 
 SHClipper::SHClipper()
@@ -23,12 +24,12 @@ void SHClipper::Sutherland_Hodgman()
     // clip each primitive
     for (int i = 0; i < primitiveCount; ++i) {
 
-        vector<Poin> *input = new vector<glm::vec4>;
-        vector<vec4> *output = new vector<glm::vec4>;
+        vector<PointObject> *input = new vector<PointObject>;
+        vector<PointObject> *output = new vector<PointObject>;
 
-        input->push_back(triangle[i].p1.pos);
-        input->push_back(triangle[i].p2.pos);
-        input->push_back(triangle[i].p3.pos);
+        input->push_back(triangle[i].p1);
+        input->push_back(triangle[i].p2);
+        input->push_back(triangle[i].p3);
 
         for (int b = Left; b <= Far; ++b) {
             clip(*input,*output,static_cast<Boundary>(b));
@@ -42,9 +43,9 @@ void SHClipper::Sutherland_Hodgman()
 
         if (input->size()==3) {
             Triangle tri;
-            tri.p1.pos = input->at(0);
-            tri.p2.pos = input->at(1);
-            tri.p3.pos = input->at(2);
+            tri.p1 = input->at(0);
+            tri.p2 = input->at(1);
+            tri.p3 = input->at(2);
             outPrimitive.push_back(tri);
         }
         // size less than 3?
@@ -59,13 +60,13 @@ void SHClipper::Sutherland_Hodgman()
 }
 
 
-void SHClipper::clip(vector<vec4> &input,
-                                    vector<vec4> &output,
+void SHClipper::clip(vector<PointObject> &input,
+                                    vector<PointObject> &output,
                                     Boundary b)
 {
     for (int i = 0; i < input.size(); ++i) {
-        vec4 begin = input[i];
-        vec4 end = input[(i+1)%input.size()];
+        PointObject begin = input[i];
+        PointObject end = input[(i+1)%input.size()];
 
         // both inside, put end to output
         if (inside(begin,b) && inside(end,b))
@@ -74,7 +75,7 @@ void SHClipper::clip(vector<vec4> &input,
         // begin outside, end inside
         // put end and intersect to output
         if ( !inside(begin,b) && inside(end,b)){
-            vec4 iPoint = intersect(begin,end,b);
+            PointObject iPoint = intersect(begin,end,b);
             // intersect point may same as begin or end point,
             // if does, skip
             if (iPoint!=begin && iPoint!=end)
@@ -85,7 +86,7 @@ void SHClipper::clip(vector<vec4> &input,
         // begin inside, end outside
         // put intersect to output
         if (inside(begin,b) && !inside(end,b)) {
-            vec4 iPoint = intersect(begin,end,b);
+            PointObject iPoint = intersect(begin,end,b);
             // intersect point may same as begin or end point,
             // if does, skip
             if (iPoint!=begin && iPoint!=end)
@@ -94,8 +95,9 @@ void SHClipper::clip(vector<vec4> &input,
     }
 }
 
-bool SHClipper::inside(vec4 p1, Boundary b)
+bool SHClipper::inside(const PointObject &p, Boundary b)
 {
+    vec4 p1 = p.getPos();
     switch (b) {
     case Left:
         if(p1.x < -1.0f)
@@ -128,9 +130,9 @@ bool SHClipper::inside(vec4 p1, Boundary b)
     return true;
 }
 
-vec4 SHClipper::intersect(vec4 p1,vec4 p2, Boundary b)
+PointObject SHClipper::intersect(PointObject &p1, PointObject &p2, Boundary b)
 {
-    vec4 result;
+    PointObject result;
 
     float u;
     switch (b) {
@@ -185,6 +187,7 @@ vec4 SHClipper::intersect(vec4 p1,vec4 p2, Boundary b)
     default:
         break;
     }
+
     return result;
 }
 /**
@@ -193,14 +196,14 @@ vec4 SHClipper::intersect(vec4 p1,vec4 p2, Boundary b)
  * @param inPolygon
  * @param out
  */
-void SHClipper::polygonToTriangle(vector<vec4> inPolygon,
+void SHClipper::polygonToTriangle(vector<PointObject> &inPolygon,
                                   vector<Triangle> &out)
 {
     if(inPolygon.size()==3){
         Triangle tri;
-        tri.p1.pos = inPolygon[0];
-        tri.p2.pos = inPolygon[1];
-        tri.p3.pos = inPolygon[2];
+        tri.p1 = inPolygon[0];
+        tri.p2 = inPolygon[1];
+        tri.p3 = inPolygon[2];
         out.push_back(tri);
         return;
     }
@@ -210,10 +213,10 @@ void SHClipper::polygonToTriangle(vector<vec4> inPolygon,
     // must initialize the iterator for begin,
     // if middle is first element,
     // middle == polygon.begin() will return false
-    vector<vec4>::iterator middle = inPolygon.begin();
-    vector<vec4>::iterator left  = inPolygon.begin();
-    vector<vec4>::iterator right  = inPolygon.begin();
-    for (vector<vec4>::iterator iter = inPolygon.begin(); iter != inPolygon.end(); ++iter) {
+    vector<PointObject>::iterator middle = inPolygon.begin();
+    vector<PointObject>::iterator left  = inPolygon.begin();
+    vector<PointObject>::iterator right  = inPolygon.begin();
+    for (auto iter = inPolygon.begin(); iter != inPolygon.end(); ++iter) {
         if (iter->x < min_x){
             min_x = iter->x;
             middle = iter;
@@ -234,11 +237,11 @@ void SHClipper::polygonToTriangle(vector<vec4> inPolygon,
 
     // target triangle
     Triangle tri;
-    tri.p1.pos = *left;
-    tri.p2.pos = *middle;
-    tri.p3.pos = *right;
+    tri.p1 = *left;
+    tri.p2 = *middle;
+    tri.p3 = *right;
 
-    vector<vec4> polygon;
+    vector<PointObject> polygon;
     // check other point inside
     bool check = false;
     int pIndex;
@@ -260,8 +263,8 @@ void SHClipper::polygonToTriangle(vector<vec4> inPolygon,
 
     // yes, spilt to two polygon
     if(check){
-        vector<vec4> polygon_1;
-        vector<vec4> polygon_2;
+        vector<PointObject> polygon_1;
+        vector<PointObject> polygon_2;
 
         // copy middle to p into 1
         for (int i= &(*middle)-&inPolygon[0]; i != pIndex+1;) {

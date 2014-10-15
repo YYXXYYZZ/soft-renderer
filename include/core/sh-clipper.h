@@ -24,12 +24,12 @@ public:
     SHClipper();
     void execute();
 
-    static void polygonToTriangle(vector<vec4> inPolygon,
+    static void polygonToTriangle(vector<PointObject> &inPolygon,
                                   vector<Triangle> &out);
 private:
-    void clip(vector<vec4> &input, vector<vec4> &output, Boundary b);
-    bool inside(vec4 p1,Boundary b);
-    vec4 intersect(vec4 p1, vec4 p2, Boundary b);
+    void clip(vector<PointObject> &input, vector<PointObject> &output, Boundary b);
+    bool inside(const PointObject &p, Boundary b);
+    PointObject intersect(PointObject &v1, PointObject &p2, Boundary b);
     void Sutherland_Hodgman();
 
 };

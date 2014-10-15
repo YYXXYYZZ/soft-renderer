@@ -69,7 +69,7 @@ void ZBuffer::execute()
         // view-port transformation
         Triangle tri= originalTri;
         for (int var = 0; var < 3; ++var) {
-            glm::vec4 &vert = *(&tri.p1.pos+var);
+            PointObject &vert = *(&tri.p1+var);
 
             // perspective divide
             vert.x = vert.x / vert.w;

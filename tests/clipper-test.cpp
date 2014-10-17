@@ -26,7 +26,7 @@ int main(){
 
 
     SHClipper clipper;
-//    clipper.execute();
+    clipper.execute();
 
     vector<PointObject> inPolygon;
     vector<Triangle> out;

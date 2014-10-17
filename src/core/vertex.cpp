@@ -1,16 +1,26 @@
 #include "core/vertex.h"
 #include <cstring>
 
+// TODO use Perspective-Correct Interpolation instead of
+// linear interpolation
 template<class T>
-T interpolatePrivate(const T&v1,const T&v2,float alpha)
+T interpolatePrivate(const T&v1,const T&v2,float &alpha)
 {
     T r;
-    r = v1 + alpha * (v2-v1);
+    r = v1*(1-alpha) +alpha*v2;
+    return r;
+}
+
+template<class T>
+T interpolatePrivate(const T&v1,const T&v2,const T&v3,float &alpha,float &beta)
+{
+    T r;
+    r = v1*(1-alpha-beta) +alpha*v2 + beta*v3;
     return r;
 }
 
 template <>
-vec2 interpolatePrivate<vec2>(const vec2&v1,const vec2&v2,float alpha)
+vec2 interpolatePrivate<vec2>(const vec2&v1,const vec2&v2,float &alpha)
 {
     vec2 v;
     v.x = interpolatePrivate(v1.x,
@@ -21,9 +31,25 @@ vec2 interpolatePrivate<vec2>(const vec2&v1,const vec2&v2,float alpha)
                              alpha);
     return v;
 }
+template <>
+vec2 interpolatePrivate(const vec2&v1,const vec2&v2,const vec2&v3,float &alpha,float &beta)
+{
+    vec2 v;
+    v.x = interpolatePrivate(v1.x,
+                             v2.x,
+                             v3.x,
+                             alpha,
+                             beta);
+    v.y = interpolatePrivate(v1.y,
+                             v2.y,
+                             v3.y,
+                             alpha,
+                             beta);
+    return v;
+}
 
 template <>
-vec3 interpolatePrivate<vec3>(const vec3&v1,const vec3&v2,float alpha)
+vec3 interpolatePrivate<vec3>(const vec3&v1,const vec3&v2,float &alpha)
 {
     vec3 v;
     v.x = interpolatePrivate(v1.x,
@@ -39,7 +65,29 @@ vec3 interpolatePrivate<vec3>(const vec3&v1,const vec3&v2,float alpha)
 }
 
 template <>
-vec4 interpolatePrivate<vec4>(const vec4&v1,const vec4&v2,float alpha)
+vec3 interpolatePrivate<vec3>(const vec3&v1,const vec3&v2,const vec3&v3,float &alpha,float &beta)
+{
+    vec3 v;
+    v.x = interpolatePrivate(v1.x,
+                             v2.x,
+                             v3.x,
+                             alpha,
+                             beta);
+    v.y = interpolatePrivate(v1.y,
+                             v2.y,
+                             v3.x,
+                             alpha,
+                             beta);
+    v.z = interpolatePrivate(v1.z,
+                             v2.z,
+                             v3.x,
+                             alpha,
+                             beta);
+    return v;
+}
+
+template <>
+vec4 interpolatePrivate<vec4>(const vec4&v1,const vec4&v2,float &alpha)
 {
     vec4 v;
     v.x = interpolatePrivate(v1.x,
@@ -54,6 +102,33 @@ vec4 interpolatePrivate<vec4>(const vec4&v1,const vec4&v2,float alpha)
     v.w = interpolatePrivate(v1.w,
                              v2.w,
                              alpha);
+    return v;
+}
+
+template <>
+vec4 interpolatePrivate<vec4>(const vec4&v1,const vec4&v2,const vec4&v3,float &alpha,float &beta)
+{
+    vec4 v;
+    v.x = interpolatePrivate(v1.x,
+                             v2.x,
+                             v3.x,
+                             alpha,
+                             beta);
+    v.y = interpolatePrivate(v1.y,
+                             v2.y,
+                             v3.x,
+                             alpha,
+                             beta);
+    v.z = interpolatePrivate(v1.z,
+                             v2.z,
+                             v3.x,
+                             alpha,
+                             beta);
+    v.w = interpolatePrivate(v1.w,
+                             v2.w,
+                             v3.x,
+                             alpha,
+                             beta);
     return v;
 }
 
@@ -151,57 +226,126 @@ glm::vec4 PointObject::getAttachVec4(const std::string &name) const
     return p_attach->v_vec4[name];
 }
 
-PointObject PointObject::interpolate(const PointObject &v, float alpha) const
+void PointObject::interpolate(const PointObject &v1,
+                              const PointObject &v2,
+                              PointObject &out, float alpha)
 {
-    assert(p_attach->v_int.size() == v.p_attach->v_int.size());
-    assert(p_attach->v_float.size() == v.p_attach->v_float.size());
-    assert(p_attach->v_vec2.size() == v.p_attach->v_vec2.size());
-    assert(p_attach->v_vec3.size() == v.p_attach->v_vec3.size());
-    assert(p_attach->v_vec4.size() == v.p_attach->v_vec4.size());
+    assert(v1.p_attach->v_int.size() == v2.p_attach->v_int.size());
+    assert(v1.p_attach->v_float.size() == v2.p_attach->v_float.size());
+    assert(v1.p_attach->v_vec2.size() == v2.p_attach->v_vec2.size());
+    assert(v1.p_attach->v_vec3.size() == v2.p_attach->v_vec3.size());
+    assert(v1.p_attach->v_vec4.size() == v2.p_attach->v_vec4.size());
 
-    PointObject result;
+    out.p_attach = shared_ptr<Attachment>(new Attachment);
 
-    for (auto i = p_attach->v_int.begin(); i != p_attach->v_int.end(); ++i) {
+    for (auto i = v1.p_attach->v_int.begin(); i != v1.p_attach->v_int.end(); ++i) {
         string name = i->first;
-        auto vaule = interpolatePrivate(p_attach->v_int.at(name),
-                                        v.p_attach->v_int.at(name),
+        auto vaule = interpolatePrivate(v1.p_attach->v_int.at(name),
+                                        v2.p_attach->v_int.at(name),
                                         alpha);
-        result.setAttachInt(name,vaule);
+        out.setAttachInt(name,vaule);
     }
 
-    for (auto i = p_attach->v_float.begin(); i != p_attach->v_float.end(); ++i) {
+    for (auto i = v1.p_attach->v_float.begin(); i != v1.p_attach->v_float.end(); ++i) {
         string name = i->first;
-        auto vaule = interpolatePrivate(p_attach->v_float.at(name),
-                                        v.p_attach->v_float.at(name),
+        auto vaule = interpolatePrivate(v1.p_attach->v_float.at(name),
+                                        v2.p_attach->v_float.at(name),
                                         alpha);
-        result.setAttachFloat(name,vaule);
+        out.setAttachFloat(name,vaule);
     }
 
-    for (auto i = p_attach->v_vec2.begin(); i != p_attach->v_vec2.end(); ++i) {
+    for (auto i = v1.p_attach->v_vec2.begin(); i !=v1.p_attach->v_vec2.end(); ++i) {
         string name = i->first;
-        auto vaule = interpolatePrivate(p_attach->v_vec2.at(name),
-                                        v.p_attach->v_vec2.at(name),
+        auto vaule = interpolatePrivate(v1.p_attach->v_vec2.at(name),
+                                        v2.p_attach->v_vec2.at(name),
                                         alpha);
-        result.setAttachVec2(name,vaule);
+        out.setAttachVec2(name,vaule);
     }
 
-    for (auto i = p_attach->v_vec3.begin(); i != p_attach->v_vec3.end(); ++i) {
+    for (auto i = v1.p_attach->v_vec3.begin(); i != v1.p_attach->v_vec3.end(); ++i) {
         string name = i->first;
-        auto vaule = interpolatePrivate(p_attach->v_vec3.at(name),
-                                        v.p_attach->v_vec3.at(name),
+        auto vaule = interpolatePrivate(v1.p_attach->v_vec3.at(name),
+                                        v2.p_attach->v_vec3.at(name),
                                         alpha);
-        result.setAttachVec3(name,vaule);
+        out.setAttachVec3(name,vaule);
     }
 
-    for (auto i = p_attach->v_vec4.begin(); i != p_attach->v_vec4.end(); ++i) {
+    for (auto i = v1.p_attach->v_vec4.begin(); i != v1.p_attach->v_vec4.end(); ++i) {
         string name = i->first;
-        auto vaule = interpolatePrivate(p_attach->v_vec4.at(name),
-                                        v.p_attach->v_vec4.at(name),
+        auto vaule = interpolatePrivate(v1.p_attach->v_vec4.at(name),
+                                        v2.p_attach->v_vec4.at(name),
                                         alpha);
-        result.setAttachVec4(name,vaule);
+        out.setAttachVec4(name,vaule);
+    }
+}
+
+void PointObject::interpolate(const PointObject &v1,
+                              const PointObject &v2,
+                              const PointObject &v3,
+                              PointObject &out,
+                              float &alpha,
+                              float &beta)
+{
+
+    // no assert ?
+    assert(v1.p_attach->v_int.size() == v2.p_attach->v_int.size());
+    assert(v1.p_attach->v_float.size() == v2.p_attach->v_float.size());
+    assert(v1.p_attach->v_vec2.size() == v2.p_attach->v_vec2.size());
+    assert(v1.p_attach->v_vec3.size() == v2.p_attach->v_vec3.size());
+    assert(v1.p_attach->v_vec4.size() == v2.p_attach->v_vec4.size());
+
+    out.p_attach = shared_ptr<Attachment>(new Attachment);
+
+    for (auto i = v1.p_attach->v_int.begin(); i != v1.p_attach->v_int.end(); ++i) {
+        string name = i->first;
+        auto vaule = interpolatePrivate(v1.p_attach->v_int.at(name),
+                                        v2.p_attach->v_int.at(name),
+                                        v3.p_attach->v_int.at(name),
+                                        alpha,
+                                        beta);
+        out.setAttachInt(name,vaule);
     }
 
-    return result;
+    for (auto i = v1.p_attach->v_float.begin(); i != v1.p_attach->v_float.end(); ++i) {
+        string name = i->first;
+        auto vaule = interpolatePrivate(v1.p_attach->v_float.at(name),
+                                        v2.p_attach->v_float.at(name),
+                                        v3.p_attach->v_float.at(name),
+                                        alpha,
+                                        beta);
+        out.setAttachFloat(name,vaule);
+    }
+
+    for (auto i = v1.p_attach->v_vec2.begin(); i !=v1.p_attach->v_vec2.end(); ++i) {
+        string name = i->first;
+        auto vaule = interpolatePrivate(v1.p_attach->v_vec2.at(name),
+                                        v2.p_attach->v_vec2.at(name),
+                                        v3.p_attach->v_vec2.at(name),
+                                        alpha,
+                                        beta);
+        out.setAttachVec2(name,vaule);
+    }
+
+    for (auto i = v1.p_attach->v_vec3.begin(); i != v1.p_attach->v_vec3.end(); ++i) {
+        string name = i->first;
+        auto vaule = interpolatePrivate(v1.p_attach->v_vec3.at(name),
+                                        v2.p_attach->v_vec3.at(name),
+                                        v3.p_attach->v_vec3.at(name),
+                                        alpha,
+                                        beta);
+        out.setAttachVec3(name,vaule);
+    }
+
+    for (auto i = v1.p_attach->v_vec4.begin(); i != v1.p_attach->v_vec4.end(); ++i) {
+        string name = i->first;
+        auto vaule = interpolatePrivate(v1.p_attach->v_vec4.at(name),
+                                        v2.p_attach->v_vec4.at(name),
+                                        v3.p_attach->v_vec4.at(name),
+                                        alpha,
+                                        beta);
+        out.setAttachVec4(name,vaule);
+    }
+
 }
 
 void PointObject::setPos(const glm::vec4 &v)
@@ -217,13 +361,22 @@ glm::vec4 PointObject::getPos() const
     return vec4(x,y,z,w);
 }
 
+float PointObject::distanceTo(const PointObject &other)
+{
+    return sqrtf((x-other.x)*(x-other.x) +
+                 (y-other.y)*(y-other.y) +
+                 (z-other.z)*(z-other.z));
+}
+
 void PointObject::detach()
 {
-    auto other = p_attach.get();
+    // if shared_ptr is unique and assign a new
+    // pointer to it, the old one will be deleted.
+    auto other = *p_attach;
     p_attach = shared_ptr<Attachment>(new Attachment);
-    p_attach->v_int = other->v_int;
-    p_attach->v_float = other->v_float;
-    p_attach->v_vec2 = other->v_vec2;
-    p_attach->v_vec3 = other->v_vec3;
-    p_attach->v_vec4 = other->v_vec4;
+    p_attach->v_int = other.v_int;
+    p_attach->v_float = other.v_float;
+    p_attach->v_vec2 = other.v_vec2;
+    p_attach->v_vec3 = other.v_vec3;
+    p_attach->v_vec4 = other.v_vec4;
 }

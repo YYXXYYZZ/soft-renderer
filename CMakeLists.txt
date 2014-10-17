@@ -4,6 +4,11 @@ project(soft-renderer)
 SET(CMAKE_BUILD_TYPE Debug)
 list( APPEND CMAKE_CXX_FLAGS "-std=c++11")
 
+if(NOT DEFINED CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
+     set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE INTERNAL "No dev warnings")
+endif()
+
+
 IF(WIN32)
     include_directories("E:/libs-dev/inlcude")
     LINK_DIRECTORIES("E:/libs-dev/libs")

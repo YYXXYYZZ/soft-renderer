@@ -76,6 +76,12 @@ void SHClipper::clip(vector<PointObject> &input,
         // put end and intersect to output
         if ( !inside(begin,b) && inside(end,b)){
             PointObject iPoint = intersect(begin,end,b);
+
+            // must interpolate after intersect
+            // end and ipoint careful ! 1-u or u?
+            float u = iPoint.distanceTo(end) / begin.distanceTo(end);
+            PointObject::interpolate(begin,end,iPoint,1-u);
+
             // intersect point may same as begin or end point,
             // if does, skip
             if (iPoint!=begin && iPoint!=end)
@@ -87,6 +93,11 @@ void SHClipper::clip(vector<PointObject> &input,
         // put intersect to output
         if (inside(begin,b) && !inside(end,b)) {
             PointObject iPoint = intersect(begin,end,b);
+            // must interpolate after intersect
+            // begin and ipoint careful ! 1-u or u?
+            float u = iPoint.distanceTo(begin) / begin.distanceTo(end);
+            PointObject::interpolate(begin,end,iPoint,u);
+
             // intersect point may same as begin or end point,
             // if does, skip
             if (iPoint!=begin && iPoint!=end)
@@ -135,6 +146,7 @@ PointObject SHClipper::intersect(PointObject &p1, PointObject &p2, Boundary b)
     PointObject result;
 
     float u;
+    bool p2In = false;
     switch (b) {
     case Left:{
         u = (-1.0f -p1.x)/(p2.x-p1.x);
@@ -142,6 +154,7 @@ PointObject SHClipper::intersect(PointObject &p1, PointObject &p2, Boundary b)
         result.y = p1.y + u*(p2.y-p1.y);
         result.z = p1.z + u*(p2.z-p1.z);
         result.w = p1.w + u*(p2.w-p1.w);
+        p2In = true;
     }
         break;
     case Right:{
@@ -187,7 +200,6 @@ PointObject SHClipper::intersect(PointObject &p1, PointObject &p2, Boundary b)
     default:
         break;
     }
-
     return result;
 }
 /**
@@ -261,7 +273,7 @@ void SHClipper::polygonToTriangle(vector<PointObject> &inPolygon,
         i%=inPolygon.size();
     }
 
-    // yes, spilt to two polygon
+    // yes, split to two polygon
     if(check){
         vector<PointObject> polygon_1;
         vector<PointObject> polygon_2;

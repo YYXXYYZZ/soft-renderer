@@ -1,6 +1,8 @@
 project(basic_render)
 
-link_directories("${CMAKE_BINARY_DIR}/lib")
+SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/../build)
+
+link_directories("${CMAKE_BINARY_DIR}/build")
 include_directories("${PROJECT_SOURCE_DIR}/../include")
 
 add_executable(${PROJECT_NAME} basic.cpp)

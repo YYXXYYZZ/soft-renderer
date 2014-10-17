@@ -20,8 +20,6 @@ struct Attachment{
     map<string,vec3> v_vec3;
     map<string,vec4> v_vec4;
 
-
-
 };
 
 class PointObject
@@ -46,10 +44,23 @@ public:
     vec3 getAttachVec3(const string &name) const;
     vec4 getAttachVec4(const string &name) const;
 
-    PointObject interpolate(const PointObject &v, float alpha) const;
+    static void interpolate(const PointObject &v1,
+                            const PointObject &v2,
+                            PointObject &out,
+                            float alpha);
+
+    static void interpolate(const PointObject &v1,
+                            const PointObject &v2,
+                            const PointObject &v3,
+                            PointObject &out,
+                            float &alpha,
+                            float &beta);
+
 
     void setPos(const vec4&v);
     vec4 getPos() const;
+
+    float distanceTo(const PointObject &other);
 
 private:
     shared_ptr<Attachment> p_attach;

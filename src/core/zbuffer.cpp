@@ -27,7 +27,7 @@ void ZBuffer::setFrameBuffer(FrameBuffer *value)
 {
     frameBuffer = value;
 }
-static int debug_plane = 0;
+
 void ZBuffer::execute()
 {
     if (!frameBuffer){
@@ -113,7 +113,7 @@ void ZBuffer::execute()
             if (result.size()==1) {
                 float x = *result.begin();
                 float zResult  = z + deltaZX * (x-min.x);
-                processBuffer(x,scanLine,zResult);
+                processBuffer(x,scanLine,zResult,tri);
             }
 
             // two point
@@ -127,29 +127,66 @@ void ZBuffer::execute()
                 // for each pixel between point
                 for (float x = begin; x <= end; ++x) {
                     float zResult = z + deltaZX * (x-min.x);
-                    processBuffer(x,scanLine,zResult);
+                    processBuffer(x,scanLine,zResult,tri);
                 }
 
             }
 
         }
 
-        debug_plane++;
-
     }
 }
 
-void ZBuffer::processBuffer(float x,float y,float zValue)
+void ZBuffer::processBuffer(float x, float y, float zValue, Triangle &t)
 {
     int _x = round(x);
     int _y = round(y);
 
     float &z = frameBuffer->zBuffer->dataAt(_x,_y);
 
-    static float t= 0.0f;
     if (zValue < z){
         //TODO color...
-        frameBuffer->colorBuffer->dataAt(_x,_y) = glm::vec3(0.7f-debug_plane*0.1,debug_plane*0.1+0.3f,0.5f);
+
+        // p.x = x p.y =y
+
+        PointObject point;
+        point.x = _x;
+        point.y = _y;
+
+        float A = x - t.p1.x;
+        float B = t.p2.x - t.p1.x;
+        float C = t.p3.x - t.p1.x;
+        float D = y - t.p1.y;
+        float E = t.p2.y - t.p1.y;
+        float F = t.p3.y - t.p1.y;
+
+
+        float v;
+
+        float u;
+
+        if (B==0) {
+            v = A/C;
+            u = (D-v*F)/ E;
+        }
+        else {
+            v = (D*B - A*E) / (F*B - C*E);
+            u = (A - v*C) / B;
+        }
+
+        //TODO u v not satisfied u >= 0 , v >=0; u+v <=1
+
+
+        PointObject::interpolate(t.p1,t.p2,t.p3,point,u,v);
+
+
+        vec3 color = point.getAttachVec3("color");
+        float xx = color.x;
+        float xy = color.y;
+        float xz = color.z;
+
+
+        frameBuffer->colorBuffer->dataAt(_x,_y) = color;
     }
 
 }

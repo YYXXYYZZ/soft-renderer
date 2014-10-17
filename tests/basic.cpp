@@ -69,6 +69,8 @@ int main()
                 glViewport(0, 0, event.size.width, event.size.height);
             }
 
+            std::cout << ">>>\n";
+
             glDrawPixels(width,height,GL_RGB,GL_FLOAT,pl.getColorBuffer());
             window.display();
         }

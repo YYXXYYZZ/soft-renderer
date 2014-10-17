@@ -1,6 +1,7 @@
 #ifndef ZBUFFER_H
 #define ZBUFFER_H
 
+class Triangle;
 class FrameBuffer;
 class ZBuffer
 {
@@ -14,7 +15,7 @@ public:
 
 private:
     FrameBuffer *frameBuffer;
-    void processBuffer(float x, float y, float zValue);
+    void processBuffer(float x, float y, float zValue, Triangle &t);
 };
 
 #endif // ZBUFFER_H

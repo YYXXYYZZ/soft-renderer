@@ -26,6 +26,8 @@ set(SRC
     ${INCROOT}/clipper.h
     ${SRCROOT}/sh-clipper.cpp
     ${INCROOT}/sh-clipper.h
+    ${SRCROOT}/fragshader.cpp
+    ${INCROOT}/fragshader.h
     ${INCROOT}/constant.h
 )
 SET(BUILD_SHARED_LIBS ON)

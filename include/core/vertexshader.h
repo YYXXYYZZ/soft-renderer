@@ -11,7 +11,7 @@ public:
 protected:
     void initialize();
     void iterationCompute(int step);
-    int iterationTimes();
+    int  iterationTimes();
 private:
     static const int w = 800;
     static const int h = 800;

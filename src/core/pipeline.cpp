@@ -85,6 +85,12 @@ void Pipeline::render()
         std::cerr << "Warning: null vertex shader! "<<std::endl;
         return;
     }
+
+    if (!fragShader) {
+        std::cerr << "Warning: null fragment shader! "<<std::endl;
+        return;
+    }
+
     vertShader->execute();
     //TODO fix me :6
     primitive->setup(config.primitiveType,36);

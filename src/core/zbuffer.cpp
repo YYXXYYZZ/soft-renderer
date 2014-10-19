@@ -3,6 +3,7 @@
 #include "core/primitive.h"
 #include "core/constant.h"
 #include "core/buffer.h"
+#include "core/shader.h"
 #include <algorithm>
 #include <cmath>
 
@@ -137,6 +138,16 @@ void ZBuffer::execute()
 
     }
 }
+Shader *ZBuffer::getFragShader() const
+{
+    return fragShader;
+}
+
+void ZBuffer::setFragShader(Shader *value)
+{
+    fragShader = value;
+}
+
 
 void ZBuffer::processBuffer(float x, float y, float zValue, Triangle &t)
 {
@@ -158,9 +169,7 @@ void ZBuffer::processBuffer(float x, float y, float zValue, Triangle &t)
         float E = t.p2.y - t.p1.y;
         float F = t.p3.y - t.p1.y;
 
-
         float v;
-
         float u;
 
         if (B==0) {
@@ -174,6 +183,13 @@ void ZBuffer::processBuffer(float x, float y, float zValue, Triangle &t)
 
         //TODO u v not satisfied u >= 0 , v >=0; u+v <=1
         PointObject::interpolate(t.p1,t.p2,t.p3,point,u,v);
+
+        if (!fragShader){
+            std::cerr << "Warning: null fragment shader! "<<std::endl;
+        }
+        else {
+            fragShader->execute();
+        }
 
         vec3 color = point.getAttachVec3("color");
 

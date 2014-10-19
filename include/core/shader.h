@@ -11,10 +11,7 @@ public:
     // iterationTimes will return how many times iterationCompute will
     // calld. iterationCompute should be called paralleled which will
     // simulate main function in shader.
-    void execute();
-
-    bool getReinitialize() const;
-    void setReinitialize(bool value);
+    virtual void execute();
 
 protected:
     virtual void initialize() = 0;
@@ -22,7 +19,6 @@ protected:
     virtual void iterationCompute(int step) = 0;
 
 private:
-    bool reinitialize;
 
 };
 

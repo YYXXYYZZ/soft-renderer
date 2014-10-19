@@ -4,6 +4,7 @@
 #include "core/constant.h"
 #include "core/buffer.h"
 #include <algorithm>
+#include <cmath>
 
 /**
  * @brief ZBuffer::ZBuffer
@@ -145,9 +146,6 @@ void ZBuffer::processBuffer(float x, float y, float zValue, Triangle &t)
     float &z = frameBuffer->zBuffer->dataAt(_x,_y);
 
     if (zValue < z){
-        //TODO color...
-
-        // p.x = x p.y =y
 
         PointObject point;
         point.x = _x;
@@ -175,16 +173,9 @@ void ZBuffer::processBuffer(float x, float y, float zValue, Triangle &t)
         }
 
         //TODO u v not satisfied u >= 0 , v >=0; u+v <=1
-
-
         PointObject::interpolate(t.p1,t.p2,t.p3,point,u,v);
 
-
         vec3 color = point.getAttachVec3("color");
-        float xx = color.x;
-        float xy = color.y;
-        float xz = color.z;
-
 
         frameBuffer->colorBuffer->dataAt(_x,_y) = color;
     }

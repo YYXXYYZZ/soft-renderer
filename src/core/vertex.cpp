@@ -7,7 +7,7 @@ template<class T>
 T interpolatePrivate(const T&v1,const T&v2,float &alpha)
 {
     T r;
-    r = v1*(1-alpha) +alpha*v2;
+    r = T(v1*(1-alpha) +alpha*v2);
     return r;
 }
 
@@ -15,7 +15,7 @@ template<class T>
 T interpolatePrivate(const T&v1,const T&v2,const T&v3,float &alpha,float &beta)
 {
     T r;
-    r = v1*(1-alpha-beta) +alpha*v2 + beta*v3;
+    r = T(v1*(1-alpha-beta) +alpha*v2 + beta*v3);
     return r;
 }
 

@@ -13,7 +13,7 @@ class Shader;
 class ZBuffer;
 class Culler;
 class Clipper;
-class FrameBuffer;
+struct FrameBuffer;
 
 class Pipeline
 {

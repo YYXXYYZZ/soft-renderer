@@ -13,8 +13,8 @@ protected:
     void iterationCompute(int step);
     int iterationTimes();
 private:
-    int w = 800;
-    int h = 800;
+    static const int w = 800;
+    static const int h = 800;
 
     float* _positions;
     float* _color;

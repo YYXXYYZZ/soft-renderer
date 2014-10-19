@@ -1,8 +1,8 @@
 #ifndef ZBUFFER_H
 #define ZBUFFER_H
 
-class Triangle;
-class FrameBuffer;
+struct Triangle;
+struct FrameBuffer;
 class ZBuffer
 {
 public:

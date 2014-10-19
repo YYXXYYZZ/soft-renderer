@@ -91,7 +91,13 @@ bool memoryCopy(const string &name, const int &size, T *in_data)
             std::cerr << "Warning: memory copy to a different type! " << name << std::endl;
             return false;
         }
-        memcpy(mem_info.address,in_data,size * sizeof(T));
+        // This is an insidious bug! can not use memcpy here, for it may copy a pointer
+        // based data type !
+        T *dest = static_cast<T *>(mem_info.address);
+        for (int i = 0; i < size; ++i) {
+            dest[i] = in_data[i];
+        }
+
         return true;
     }
     catch(const std::out_of_range & ){

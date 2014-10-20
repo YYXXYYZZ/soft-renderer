@@ -3,7 +3,7 @@
 
 struct Triangle;
 struct FrameBuffer;
-class Shader;
+class FragShader;
 class ZBuffer
 {
 public:
@@ -12,13 +12,13 @@ public:
     FrameBuffer *getFrameBuffer() const;
     void setFrameBuffer(FrameBuffer *value);
 
-    Shader *getFragShader() const;
-    void setFragShader(Shader *value);
+    FragShader *getFragShader() const;
+    void setFragShader(FragShader *value);
 
     void execute();
 
 private:
-    Shader *fragShader;
+    FragShader *fragShader;
     FrameBuffer *frameBuffer;
     void processBuffer(float x, float y, float zValue, Triangle &t);
 };

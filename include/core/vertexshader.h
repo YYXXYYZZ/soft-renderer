@@ -8,18 +8,19 @@ class VertexShader : public Shader
 {
 public:
     VertexShader();
-protected:
-    void initialize();
-    void iterationCompute(int step);
-    int  iterationTimes();
+
+    void execute();
+
+    // initialize will init all necessary memory and uniform variable
+    // iterationTimes will return how many times iterationCompute will
+    // calld. iterationCompute should be called paralleled which will
+    // simulate main function in shader.
+    void setIterationCompute(void (*iterationCompute)(int step));
+    void setIterationTimes(int value);
+
 private:
-    static const int w = 800;
-    static const int h = 800;
-
-    float* _positions;
-    float* _color;
-
-    PointObject *vertices;
+    void (*iterationCompute)(int step);
+    int times;
 };
 
 #endif // VERTEXSHADER_H

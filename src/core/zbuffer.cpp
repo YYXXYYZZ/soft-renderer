@@ -3,7 +3,7 @@
 #include "core/primitive.h"
 #include "core/constant.h"
 #include "core/buffer.h"
-#include "core/shader.h"
+#include "core/fragShader.h"
 #include <algorithm>
 #include <cmath>
 
@@ -138,16 +138,15 @@ void ZBuffer::execute()
 
     }
 }
-Shader *ZBuffer::getFragShader() const
+FragShader *ZBuffer::getFragShader() const
 {
     return fragShader;
 }
 
-void ZBuffer::setFragShader(Shader *value)
+void ZBuffer::setFragShader(FragShader *value)
 {
     fragShader = value;
 }
-
 
 void ZBuffer::processBuffer(float x, float y, float zValue, Triangle &t)
 {
@@ -188,6 +187,7 @@ void ZBuffer::processBuffer(float x, float y, float zValue, Triangle &t)
             std::cerr << "Warning: null fragment shader! "<<std::endl;
         }
         else {
+            fragShader->setArgument(&x,&y,&t);
             fragShader->execute();
         }
 

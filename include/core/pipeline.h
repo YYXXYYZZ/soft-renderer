@@ -9,7 +9,8 @@ enum ClipperType{
 };
 
 
-class Shader;
+class VertexShader;
+class FragShader;
 class ZBuffer;
 class Culler;
 class Clipper;
@@ -30,8 +31,8 @@ public:
 
     void render();
     void clear();
-    void attachVertShader(Shader *vShader);
-    void attachFragShader(Shader *fShader);
+    void attachVertShader(VertexShader *vShader);
+    void attachFragShader(FragShader *fShader);
 
     Config getConfig() const;
     void setConfig(const Config &value);
@@ -47,8 +48,8 @@ private:
     Culler *culler;
     ZBuffer *zbuffer;
     Primitive *primitive;
-    Shader *vertShader;
-    Shader *fragShader;
+    VertexShader *vertShader;
+    FragShader *fragShader;
     FrameBuffer *frameBuffer;
 
     void initFrameBuffer();

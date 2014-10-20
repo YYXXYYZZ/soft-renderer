@@ -26,17 +26,17 @@ Pipeline::~Pipeline()
     delete primitive;
     if (frameBuffer)
         delete frameBuffer;
-
 }
 
-void Pipeline::attachVertShader(Shader *vShader)
+void Pipeline::attachVertShader(VertexShader *vShader)
 {
     vertShader = vShader;
 }
 
-void Pipeline::attachFragShader(Shader *fShader)
+void Pipeline::attachFragShader(FragShader *fShader)
 {
     fragShader = fShader;
+    zbuffer->setFragShader(fShader);
 }
 FrameBuffer *Pipeline::getFrameBuffer() const
 {

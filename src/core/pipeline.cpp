@@ -26,8 +26,12 @@ Pipeline::~Pipeline()
     delete culler;
     delete zbuffer;
     delete primitive;
-    if (frameBuffer)
-        delete frameBuffer;
+    if (frameBuffer){
+	delete frameBuffer->zBuffer;
+	delete frameBuffer->colorBuffer;
+	delete frameBuffer;
+	
+    }
 }
 
 void Pipeline::attachVertShader(VertexShader *vShader)

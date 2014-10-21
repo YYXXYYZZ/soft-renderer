@@ -32,4 +32,6 @@ set(SRC
 )
 SET(BUILD_SHARED_LIBS ON)
 source_group("" FILES ${SRC})
+
 add_library(sf-core ${SRC})
+target_link_libraries(sf-core gomp)

@@ -53,7 +53,8 @@ private:
     FragShader *fragShader;
     FrameBuffer *frameBuffer;
 
-    void initFrameBuffer();
+    void makeFrameBuffer();
+    void fillFrameBuffer();
 };
 
 

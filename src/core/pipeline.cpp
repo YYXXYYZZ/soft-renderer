@@ -20,18 +20,20 @@ Pipeline::Pipeline()
 
 Pipeline::~Pipeline()
 {
-    clear();
-
     delete clipper;
     delete culler;
     delete zbuffer;
     delete primitive;
+
     if (frameBuffer){
-	delete frameBuffer->zBuffer;
-	delete frameBuffer->colorBuffer;
-	delete frameBuffer;
-	
+        delete frameBuffer->zBuffer;
+        delete frameBuffer->colorBuffer;
+        delete frameBuffer;
     }
+
+    clear();
+    GPUMemory::dealloc<PointObject>(Constant::SF_POSITION);
+
 }
 
 void Pipeline::attachVertShader(VertexShader *vShader)
@@ -59,19 +61,24 @@ vec3 *Pipeline::getColorBuffer() const
     return frameBuffer->colorBuffer->buffer();
 }
 
-void Pipeline::initFrameBuffer()
+void Pipeline::makeFrameBuffer()
 {
     frameBuffer = new FrameBuffer;
     frameBuffer->w = config.width;
     frameBuffer->h = config.height;
     frameBuffer->zBuffer = new Buffer<float>(frameBuffer->w,frameBuffer->h);
     frameBuffer->colorBuffer = new Buffer<vec3>(frameBuffer->w,frameBuffer->h);
+    fillFrameBuffer();
+    zbuffer->setFrameBuffer(frameBuffer);
+}
 
+void Pipeline::fillFrameBuffer()
+{
+#pragma omp parallel for
     for (int i = 0; i < config.width*config.height; ++i) {
         frameBuffer->zBuffer->buffer()[i] = FLT_MAX;
         frameBuffer->colorBuffer->buffer()[i] = config.clearColor;
     }
-    zbuffer->setFrameBuffer(frameBuffer);
 }
 
 Pipeline::Config Pipeline::getConfig() const
@@ -82,7 +89,7 @@ Pipeline::Config Pipeline::getConfig() const
 void Pipeline::setConfig(const Config &value)
 {
     config = value;
-    initFrameBuffer();
+    makeFrameBuffer();
 }
 
 void Pipeline::render()
@@ -107,6 +114,7 @@ void Pipeline::render()
 
 /**
  * @brief Pipeline::clear remove unused memory
+ *  this two invisible to client
  */
 void Pipeline::clear()
 {
@@ -116,7 +124,9 @@ void Pipeline::clear()
 
 void Pipeline::update()
 {
-
+    clear();
+    fillFrameBuffer();
+    render();
 }
 
 

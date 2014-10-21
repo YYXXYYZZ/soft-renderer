@@ -172,7 +172,7 @@ void initialize()
     glm::mat4 projection = glm::perspective(60.0f, (float)w/h, 0.3f, 100.0f);
     glm::mat4 orthprojection = glm::ortho( -1.f, 1.f, -1.f, 1.f, -1.f, 1.f );
 
-    MVP = /*orthprojection *view * */ model;
+    MVP = /*projection *view **/  model;
 }
 
 void FragShaderInit(){
@@ -213,13 +213,13 @@ int main()
         return 0;
     }
 
+    initialize();
+
     VertexShader *vs = new VertexShader ;
-    vs->setIntializeFuction(&initialize);
     vs->setIterationCompute(&iterationCompute);
     vs->setIterationTimes(times);
 
     FragShader *fs = new FragShader;
-    fs->setIntializeFuction(&FragShaderInit);
     fs->setIterationCompute(&FragShaderIterCompute);
 
     Pipeline::Config config;
@@ -234,8 +234,8 @@ int main()
     pl.attachFragShader(fs);
     pl.render();
 
-    //sf::Clock clock;
-    //clock.restart();
+//    sf::Clock clock;
+//    clock.restart();
     while(window.isOpen()){
         sf::Event event;
         while(window.pollEvent(event)){
@@ -269,13 +269,19 @@ int main()
                 glViewport(0, 0, event.size.width, event.size.height);
             }
 
+            if (event.type == sf::Event::KeyPressed) {
+                static float step = 0.01f;
+                MVP = glm::translate(MVP,glm::vec3(step,0.0f,0.0f));
+                pl.update();
+            }
+
             glDrawPixels(width,height,GL_RGB,GL_FLOAT,pl.getColorBuffer());
             window.display();
         }
 
-        //float fps = 1.f / clock.getElapsedTime().asSeconds();
-        //std::cout << "fps" << fps << std::endl;
-        //clock.restart();
+//        float fps = 1.f / clock.getElapsedTime().asSeconds();
+//        std::cout << "fps" << fps << std::endl;
+//        clock.restart();
     }
 
 

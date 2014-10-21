@@ -30,7 +30,8 @@ bool Primitive::setup(PrimitiveType type, int count)
         GPUMemory::alloc(Constant::SF_PRIMITIVESETUPOUT,
                          size,
                          objects);
-        //TODO parallel
+
+#pragma omp parallel for
         for (int i = 0; i < size; i++) {
             objects[i].p1 = verteices[i*3];
             objects[i].p2 = verteices[i*3+1];

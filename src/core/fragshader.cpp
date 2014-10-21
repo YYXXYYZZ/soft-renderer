@@ -12,7 +12,6 @@ void FragShader::execute()
 {
     assert(point&&primitive&&iterationCompute);
 
-    initialize();
     frag_color = iterationCompute(*point,*primitive);
 }
 

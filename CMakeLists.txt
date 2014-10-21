@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 project(soft-renderer)
 SET(CMAKE_BUILD_TYPE Debug)
-list( APPEND CMAKE_CXX_FLAGS "-std=c++11")
+list( APPEND CMAKE_CXX_FLAGS "-std=c++11 -fopenmp")
 
 if(NOT DEFINED CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
      set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE INTERNAL "No dev warnings")

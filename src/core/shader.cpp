@@ -14,8 +14,3 @@ void Shader::execute()
 {
 
 }
-
-void Shader::setIntializeFuction(void (*initialize)())
-{
-    this->initialize = initialize;
-}

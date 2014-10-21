@@ -8,10 +8,8 @@ public:
     virtual ~Shader();
 
     virtual void execute();
-    void setIntializeFuction(void (*initialize)());
 
 protected:
-    void (*initialize)();
 
 };
 

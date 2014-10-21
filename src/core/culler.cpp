@@ -16,7 +16,7 @@ void Culler::execute()
         return;
     }
 
-    // TODO: parallel
+#pragma omp parallel for
     for (int i = 0; i < size; ++i) {
         Triangle &tri = data[i];
 

@@ -5,16 +5,14 @@
 
 VertexShader::VertexShader()
 {
-    initialize = nullptr;
     iterationCompute = nullptr;
 }
 
 void VertexShader::execute()
 {
-    assert(initialize&&iterationCompute);
+    assert(iterationCompute);
 
-    initialize();
-    // TODO parallel!
+#pragma omp parallel for
     for (int step = 0; step < times; ++step) {
         iterationCompute(step);
     }

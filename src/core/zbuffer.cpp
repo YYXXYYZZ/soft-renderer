@@ -99,6 +99,7 @@ void ZBuffer::execute()
         // TODO parallel
         // attention: scan line operate on window coordinate
         // form low y to high y(bottom to up)
+
         for (float scanLine = round(min.y); scanLine <= round(max.y); ++scanLine) {
 
             // z' = z + B/C*delta

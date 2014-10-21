@@ -1,25 +1,31 @@
 #ifndef FRAGSHADER_H
 #define FRAGSHADER_H
 
+#include <glm/vec3.hpp>
 #include "core/shader.h"
 
+using glm::vec3;
+
 struct Triangle;
+class PointObject;
 class FragShader : public Shader
 {
 public:
     FragShader();
 
     virtual void execute() override;
-    void setIterationCompute(void (*iterationCompute)(float &,float &,Triangle &));
+    void setIterationCompute(vec3 (*iterationCompute)(PointObject &,Triangle &));
+
+
+    vec3 fragColor() const;
 
 private:
-    void (*iterationCompute)(float &x_window,float &y_window,Triangle &t);
+    vec3 (*iterationCompute)(PointObject &point,Triangle &t);
+    void setArgument(PointObject *point, Triangle *t);
 
-    void setArgument(float *x_window, float *y_window, Triangle *t);
-
-    float *x_window;
-    float *y_window;
+    PointObject *point;
     Triangle *primitive;
+    vec3 frag_color;
 
     friend class ZBuffer;
 

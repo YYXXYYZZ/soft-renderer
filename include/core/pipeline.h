@@ -40,7 +40,7 @@ public:
     FrameBuffer *getFrameBuffer() const;
     void setFrameBuffer(FrameBuffer *value);
 
-    vec3* getColorBuffer() const;
+    vec3 *getColorBuffer() const;
 
 private:
     Config config;

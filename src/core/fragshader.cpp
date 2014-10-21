@@ -1,32 +1,35 @@
 #include "core/fragshader.h"
+#include "core/vertex.h"
 #include <cassert>
 FragShader::FragShader()
 {
-    x_window = nullptr;
-    y_window = nullptr;
+    point = nullptr;
     iterationCompute = nullptr;
 }
 
 // called once for every pixel
 void FragShader::execute()
 {
-    assert(x_window&&y_window&&primitive&&iterationCompute);
+    assert(point&&primitive&&iterationCompute);
 
     initialize();
-    iterationCompute(*x_window,*y_window,*primitive);
+    frag_color = iterationCompute(*point,*primitive);
 }
 
-void FragShader::setIterationCompute(void (*iterationCompute)(float &,
-                                                              float &,
+void FragShader::setIterationCompute(vec3 (*iterationCompute)(PointObject &,
                                                               Triangle &))
 {
     this->iterationCompute = iterationCompute;
 }
 
-void FragShader::setArgument(float *x_window, float *y_window, Triangle *t)
+vec3 FragShader::fragColor() const
 {
-    this->x_window = x_window;
-    this->y_window = y_window;
+    return frag_color;
+}
+
+void FragShader::setArgument(PointObject *point, Triangle *t)
+{
+    this->point = point;
     this->primitive = t;
 }
 

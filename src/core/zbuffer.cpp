@@ -85,7 +85,6 @@ void ZBuffer::execute()
             vert.w = 1.0f;
         }
 
-
         vec2 min;
         vec2 max;
         tri.extremeValue(min,max);
@@ -96,8 +95,6 @@ void ZBuffer::execute()
         const float zValue = downPoint.z;
         const float deltaZX = - normal.x/normal.z;
         const float deltaZY = - normal.y/normal.z;
-
-
 
         // TODO parallel
         // attention: scan line operate on window coordinate
@@ -187,13 +184,11 @@ void ZBuffer::processBuffer(float x, float y, float zValue, Triangle &t)
             std::cerr << "Warning: null fragment shader! "<<std::endl;
         }
         else {
-            fragShader->setArgument(&x,&y,&t);
+            fragShader->setArgument(&point,&t);
             fragShader->execute();
+            auto color = fragShader->fragColor();
+            frameBuffer->colorBuffer->dataAt(_x,_y) = color;
         }
-
-        vec3 color = point.getAttachVec3("color");
-
-        frameBuffer->colorBuffer->dataAt(_x,_y) = color;
     }
 
 }

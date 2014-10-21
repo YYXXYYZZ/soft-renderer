@@ -30,8 +30,3 @@ void VertexShader::setIterationTimes(int value)
     this->times = value;
 }
 
-
-
-
-
-

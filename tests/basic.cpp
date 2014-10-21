@@ -179,8 +179,8 @@ void FragShaderInit(){
 
 }
 
-void FragShaderIterCompute(float &x_window,float &y_window,Triangle &t){
-
+glm::vec3 FragShaderIterCompute(PointObject &p,Triangle &t){
+    return p.getAttachVec3("color");
 }
 
 

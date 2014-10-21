@@ -3,7 +3,7 @@
 #include "core/primitive.h"
 #include "core/constant.h"
 #include "core/buffer.h"
-#include "core/fragShader.h"
+#include "core/fragshader.h"
 #include <algorithm>
 #include <cmath>
 

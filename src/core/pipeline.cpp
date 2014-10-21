@@ -20,6 +20,8 @@ Pipeline::Pipeline()
 
 Pipeline::~Pipeline()
 {
+    clear();
+
     delete clipper;
     delete culler;
     delete zbuffer;
@@ -99,10 +101,18 @@ void Pipeline::render()
     zbuffer->execute();
 }
 
-//TODO clear
+/**
+ * @brief Pipeline::clear remove unused memory
+ */
 void Pipeline::clear()
 {
     GPUMemory::dealloc<Triangle>(Constant::SF_PRIMITIVESETUPOUT);
+    GPUMemory::dealloc<Triangle>(Constant::SF_CLIPOUT);
+}
+
+void Pipeline::update()
+{
+
 }
 
 

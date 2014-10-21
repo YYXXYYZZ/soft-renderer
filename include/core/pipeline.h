@@ -31,6 +31,7 @@ public:
 
     void render();
     void clear();
+    void update();
     void attachVertShader(VertexShader *vShader);
     void attachFragShader(FragShader *fShader);
 

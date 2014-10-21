@@ -184,12 +184,6 @@ glm::vec3 FragShaderIterCompute(PointObject &p,Triangle &t){
 }
 
 
-
-/**
- * @brief VertexShader::iterationCompute
- *        for each vertex
- * @param step
- */
 void iterationCompute(int step)
 {
     glm::vec4 pos(_positions[step*3],
@@ -283,6 +277,7 @@ int main()
         //std::cout << "fps" << fps << std::endl;
         //clock.restart();
     }
+
 
     delete vs;
     delete fs;

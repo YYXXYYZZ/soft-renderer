@@ -171,6 +171,15 @@ bool PointObject::operator!=(const PointObject &other)
     return getPos()!=other.getPos();
 }
 
+PointObject &PointObject::operator/(float scale)
+{
+    this->x /= scale;
+    this->y /= scale;
+    this->z /= scale;
+    this->w /= scale;
+    return *this;
+}
+
 void PointObject::setAttachInt(const std::string &name, const int &v)
 {
     detach();

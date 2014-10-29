@@ -28,8 +28,8 @@ public:
                                   vector<Triangle> &out);
 private:
     void clip(vector<PointObject> &input, vector<PointObject> &output, Boundary b);
-    bool inside(const PointObject &p, Boundary b);
-    PointObject intersect(PointObject &v1, PointObject &p2, Boundary b);
+    bool inside(PointObject p, Boundary b);
+    PointObject intersect(PointObject v1, PointObject p2, Boundary b);
     void Sutherland_Hodgman();
 
 };

@@ -6,15 +6,15 @@
 #include <core/vertexshader.h>
 #include <core/fragshader.h>
 #include <GL/glew.h>
-using namespace std;
-
 #include <glm/gtc/matrix_transform.hpp>
 
-static const int w = 800;
-static const int h = 800;
+using namespace std;
+
+static const int w = 500;
+static const int h = 500;
 float* _positions;
 float* _color;
-glm::mat4 MVP;
+glm::mat4 MVP(1.0f);
 
 static float A[3]={
     0.5,0.5,-0.5
@@ -152,7 +152,6 @@ PointObject *vertices;
 
 void initialize()
 {
-
     int vertexCount = sizeof(positions)/sizeof(float)/3;
     GPUMemory::alloc(Constant::SF_POSITION,vertexCount,vertices);
 
@@ -162,27 +161,18 @@ void initialize()
     GPUMemory::memoryCopy("positions",sizeof(positions)/sizeof(float),positions);
     GPUMemory::memoryCopy("color",sizeof(color)/sizeof(float),color);
 
-    glm::mat4 model = glm::mat4(1.0f);
-    //model = glm::translate(model,glm::vec3(0.5f,0.0f,0.0f));
-    //model = glm::translate(model,glm::vec3(0.75f,0.0f,0.0f));
-    model = glm::rotate(model,-45.0f,glm::vec3(1,1,1));
-    glm::mat4 view = glm::lookAt(glm::vec3(0.0f,0.0f,0.9f),
+    glm::mat4 model = glm::rotate( glm::mat4(1.0f),45.0f,glm::vec3(1,0,0));
+    glm::mat4 view = glm::lookAt(glm::vec3(0.0f,0.0f,2.0f),
                                  glm::vec3(0.0f,0.0f,0.0f),
-                                 glm::vec3(0.0f,1.0f,0.0f));
-    glm::mat4 projection = glm::perspective(60.0f, (float)w/h, 0.3f, 100.0f);
-    glm::mat4 orthprojection = glm::ortho( -1.f, 1.f, -1.f, 1.f, -1.f, 1.f );
-
-    MVP = /*projection *view **/  model;
-}
-
-void FragShaderInit(){
+                                 glm::vec3(0.0f,0.1f,0.0f));
+    glm::mat4 projection = glm::perspective(60.0f, (float)0.75, 0.3f, 100.0f);
+    MVP = projection *view *model;
 
 }
 
 glm::vec3 FragShaderIterCompute(PointObject &p,Triangle &t){
     return p.getAttachVec3("color");
 }
-
 
 void iterationCompute(int step)
 {
@@ -203,8 +193,8 @@ void iterationCompute(int step)
 int main()
 {
 
-    int width = 600;
-    int height = 600;
+    int width = 500;
+    int height = 500;
 
     sf::RenderWindow window(sf::VideoMode(width,height),"soft-renderer");
 
@@ -270,11 +260,32 @@ int main()
             }
 
             if (event.type == sf::Event::KeyPressed) {
-                static float step = 0.01f;
-                MVP = glm::translate(MVP,glm::vec3(step,0.0f,0.0f));
+
+                glm::vec4 col(0);
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+                {
+                    col.x -= 0.05f;
+                }
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+                {
+                   col.x += 0.05f;
+                }
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+                {
+                    col.y += 0.05f;
+                }
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+                {
+                    col.y -= 0.05f;
+                }
+
+                glm::mat4 translate = glm::translate(glm::mat4(1),vec3(col));
+                MVP = translate * MVP;
                 pl.update();
             }
-
             glDrawPixels(width,height,GL_RGB,GL_FLOAT,pl.getColorBuffer());
             window.display();
         }

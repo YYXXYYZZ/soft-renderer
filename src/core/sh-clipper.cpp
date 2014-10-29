@@ -107,32 +107,32 @@ void SHClipper::clip(vector<PointObject> &input,
     }
 }
 
-bool SHClipper::inside(const PointObject &p, Boundary b)
+bool SHClipper::inside(PointObject p, Boundary b)
 {
-    vec4 p1 = p.getPos();
+    p = p / p.w;
     switch (b) {
     case Left:
-        if(p1.x < -1.0f)
+        if(p.x < -1.0f)
             return false;
         break;
     case Right:
-        if(p1.x > 1.0f)
+        if(p.x > 1.0f)
             return false;
         break;
     case Bottom:
-        if(p1.y < -1.0f)
+        if(p.y < -1.0f)
             return false;
         break;
     case Top:
-        if(p1.y > 1.0f)
+        if(p.y > 1.0f)
             return false;
         break;
     case Near:
-        if(p1.z > 1.0f)
+        if(p.z > 1.0f)
             return false;
         break;
     case Far:
-        if(p1.z < -1.0f)
+        if(p.z < -1.0f)
             return false;
         break;
 
@@ -142,9 +142,12 @@ bool SHClipper::inside(const PointObject &p, Boundary b)
     return true;
 }
 
-PointObject SHClipper::intersect(PointObject &p1, PointObject &p2, Boundary b)
+PointObject SHClipper::intersect(PointObject p1, PointObject p2, Boundary b)
 {
     PointObject result;
+    result.w = 1.0f;
+    p1 = p1 / p1.w;
+    p2 = p2 / p2.w;
 
     float u;
     bool p2In = false;
@@ -154,7 +157,6 @@ PointObject SHClipper::intersect(PointObject &p1, PointObject &p2, Boundary b)
         result.x = -1.0f;
         result.y = p1.y + u*(p2.y-p1.y);
         result.z = p1.z + u*(p2.z-p1.z);
-        result.w = p1.w + u*(p2.w-p1.w);
         p2In = true;
     }
         break;
@@ -163,7 +165,6 @@ PointObject SHClipper::intersect(PointObject &p1, PointObject &p2, Boundary b)
         result.x = 1.0f;
         result.y = p1.y + u*(p2.y-p1.y);
         result.z = p1.z + u*(p2.z-p1.z);
-        result.w = p1.w + u*(p2.w-p1.w);
     }
         break;
     case Bottom:{
@@ -171,7 +172,6 @@ PointObject SHClipper::intersect(PointObject &p1, PointObject &p2, Boundary b)
         result.x = p1.x + u*(p2.x-p1.x);
         result.y = -1.0f;
         result.z = p1.z + u*(p2.z-p1.z);
-        result.w = p1.w + u*(p2.w-p1.w);
     }
         break;
     case Top:{
@@ -179,7 +179,6 @@ PointObject SHClipper::intersect(PointObject &p1, PointObject &p2, Boundary b)
         result.x = p1.x + u*(p2.x-p1.x);
         result.y = 1.0f;
         result.z = p1.z + u*(p2.z-p1.z);
-        result.w = p1.w + u*(p2.w-p1.w);
     }
         break;
     case Near:{
@@ -187,7 +186,6 @@ PointObject SHClipper::intersect(PointObject &p1, PointObject &p2, Boundary b)
         result.x = p1.x + u*(p2.x-p1.x);
         result.y = p1.y + u*(p2.y-p1.y);
         result.z = 1.0f;
-        result.w = p1.w + u*(p2.w-p1.w);
     }
         break;
     case Far:{
@@ -195,7 +193,6 @@ PointObject SHClipper::intersect(PointObject &p1, PointObject &p2, Boundary b)
         result.x = p1.x + u*(p2.x-p1.x);
         result.y = p1.y + u*(p2.y-p1.y);
         result.z = -1.0f;
-        result.w = p1.w + u*(p2.w-p1.w);
     }
         break;
     default:

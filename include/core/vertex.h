@@ -30,6 +30,7 @@ public:
     PointObject(const PointObject&other);
     PointObject &operator=(const PointObject&other);
     bool operator!=(const PointObject&other);
+    PointObject &operator/(float scale);
 
     // attachment
     void setAttachInt(const string &name,const int&v);

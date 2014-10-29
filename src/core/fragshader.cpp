@@ -3,16 +3,12 @@
 #include <cassert>
 FragShader::FragShader()
 {
-    point = nullptr;
-    iterationCompute = nullptr;
 }
 
 // called once for every pixel
-void FragShader::execute()
+void FragShader::execute(PointObject *point, Triangle *t)
 {
-    assert(point&&primitive&&iterationCompute);
-
-    frag_color = iterationCompute(*point,*primitive);
+    frag_color = iterationCompute(*point,*t);
 }
 
 void FragShader::setIterationCompute(vec3 (*iterationCompute)(PointObject &,
@@ -24,12 +20,6 @@ void FragShader::setIterationCompute(vec3 (*iterationCompute)(PointObject &,
 vec3 FragShader::fragColor() const
 {
     return frag_color;
-}
-
-void FragShader::setArgument(PointObject *point, Triangle *t)
-{
-    this->point = point;
-    this->primitive = t;
 }
 
 

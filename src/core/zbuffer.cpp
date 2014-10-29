@@ -121,14 +121,15 @@ void ZBuffer::execute()
 
             // two point
             if (result.size()==2) {
-                float begin = *(result.begin());
-                float end = *(--result.end());
+                int begin = *(result.begin());
+                int end = *(--result.end());
                 if (begin>end)
                     std::swap(begin,end);
 
                 // TODO: parallel
                 // for each pixel between point
-                for (float x = begin; x <= end; ++x) {
+#pragma omp parallel for
+                for (auto x = begin; x <= end; ++x) {
                     float zResult = z + deltaZX * (x-vec2_min.x);
                     processBuffer(x,scanLine,zResult,tri);
                 }
@@ -182,14 +183,13 @@ void ZBuffer::processBuffer(float x, float y, float zValue, Triangle &t)
         }
 
         //TODO u v not satisfied u >= 0 , v >=0; u+v <=1
-        PointObject::interpolate(t.p1,t.p2,t.p3,point,u,v);
+//        PointObject::interpolate(t.p1,t.p2,t.p3,point,u,v);
 
         if (!fragShader){
             std::cerr << "Warning: null fragment shader! "<<std::endl;
         }
         else {
-            fragShader->setArgument(&point,&t);
-            fragShader->execute();
+            fragShader->execute(&point,&t);
             auto color = fragShader->fragColor();
             frameBuffer->colorBuffer->dataAt(_x,_y) = color;
         }

@@ -13,7 +13,7 @@ class FragShader : public Shader
 public:
     FragShader();
 
-    virtual void execute() override;
+    virtual void execute(PointObject *point, Triangle *t);
     void setIterationCompute(vec3 (*iterationCompute)(PointObject &,Triangle &));
 
 
@@ -23,8 +23,6 @@ private:
     vec3 (*iterationCompute)(PointObject &point,Triangle &t);
     void setArgument(PointObject *point, Triangle *t);
 
-    PointObject *point;
-    Triangle *primitive;
     vec3 frag_color;
 
     friend class ZBuffer;

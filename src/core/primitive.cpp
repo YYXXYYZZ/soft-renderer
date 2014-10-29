@@ -66,9 +66,10 @@ bool Primitive::setupByIndex(PrimitiveType type, int count)
 /*
  *  algo: www.cnblogs.com/graphics/archive/2010/08/05/1793393.html
  */
-bool Triangle::inside(const PointObject &p) const
+bool Triangle::inside(PointObject p) const
 {
 
+    p = p/p.w;
     vec3 v0(p3.getPos() - p1.getPos());
     vec3 v1(p2.getPos() - p1.getPos());
     vec3 v2(p.getPos() - p1.getPos());
@@ -181,6 +182,22 @@ void Triangle::intersect(float y,float min_x,float max_x, std::set<float> &resul
         if(between(min_x,max_x,x))
             result.insert(x);
     }
+}
+
+void Triangle::perspectiveDivide()
+{
+    p1.x = p1.x / p1.w;
+    p1.y = p1.y / p1.w;
+    p1.z = p1.z / p1.w;
+    p1.w = 1.0f;
+    p2.x = p2.x / p2.w;
+    p2.y = p2.y / p2.w;
+    p2.z = p2.z / p2.w;
+    p2.w = 1.0f;
+    p3.x = p3.x / p3.w;
+    p3.y = p3.y / p3.w;
+    p3.z = p3.z / p3.w;
+    p3.w = 1.0f;
 }
 
 glm::vec3 Triangle::normal() const

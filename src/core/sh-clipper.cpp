@@ -219,7 +219,7 @@ void SHClipper::polygonToTriangle(vector<PointObject> &inPolygon,
     }
 
     // find middle
-    float min_x = inPolygon.front().x;
+    float min_x = inPolygon.front().x / inPolygon.front().w;
     // must initialize the iterator for begin,
     // if middle is first element,
     // middle == polygon.begin() will return false
@@ -227,8 +227,8 @@ void SHClipper::polygonToTriangle(vector<PointObject> &inPolygon,
     vector<PointObject>::iterator left  = inPolygon.begin();
     vector<PointObject>::iterator right  = inPolygon.begin();
     for (auto iter = inPolygon.begin(); iter != inPolygon.end(); ++iter) {
-        if (iter->x < min_x){
-            min_x = iter->x;
+        if (iter->x/iter->w < min_x){
+            min_x = iter->x/iter->w;
             middle = iter;
         }
     }
@@ -250,6 +250,7 @@ void SHClipper::polygonToTriangle(vector<PointObject> &inPolygon,
     tri.p1 = *left;
     tri.p2 = *middle;
     tri.p3 = *right;
+    tri.perspectiveDivide();
 
     vector<PointObject> polygon;
     // check other point inside

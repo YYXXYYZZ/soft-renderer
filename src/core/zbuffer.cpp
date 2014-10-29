@@ -85,9 +85,9 @@ void ZBuffer::execute()
             vert.w = 1.0f;
         }
 
-        vec2 min;
-        vec2 max;
-        tri.extremeValue(min,max);
+        vec2 vec2_min;
+        vec2 vec2_max;
+        tri.extremeValue(vec2_min,vec2_max);
 
         // attention: initial zValue in normalized coordinate
         // find that point
@@ -100,19 +100,22 @@ void ZBuffer::execute()
         // attention: scan line operate on window coordinate
         // form low y to high y(bottom to up)
 
-        for (float scanLine = round(min.y); scanLine <= round(max.y); ++scanLine) {
+        int int_min = fmax(round(vec2_min.y),0);
+        int int_max = fmin(round(vec2_max.y),height);
+
+        for (auto scanLine =int_min; scanLine <int_max ;++scanLine) {
 
             // z' = z + B/C*delta
-            float z = zValue + deltaZY*(scanLine-min.y);
+            float z = zValue + deltaZY*(scanLine-vec2_min.y);
 
             // for every pixel on this scan line
             std::set<float> result;
-            tri.intersect(scanLine,min.x,max.x,result);
+            tri.intersect(scanLine,vec2_min.x,vec2_max.x,result);
 
             // one point
             if (result.size()==1) {
                 float x = *result.begin();
-                float zResult  = z + deltaZX * (x-min.x);
+                float zResult  = z + deltaZX * (x-vec2_min.x);
                 processBuffer(x,scanLine,zResult,tri);
             }
 
@@ -126,7 +129,7 @@ void ZBuffer::execute()
                 // TODO: parallel
                 // for each pixel between point
                 for (float x = begin; x <= end; ++x) {
-                    float zResult = z + deltaZX * (x-min.x);
+                    float zResult = z + deltaZX * (x-vec2_min.x);
                     processBuffer(x,scanLine,zResult,tri);
                 }
 

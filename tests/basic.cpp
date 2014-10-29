@@ -216,7 +216,7 @@ int main()
     config.height = height;
     config.width = width;
     config.primitiveType = TRIANGLES;
-    config.clearColor = glm::vec3(0.0f,0.0f,0.0f);
+    config.clearColor = glm::vec3(0.5f,0.0f,0.0f);
 
     Pipeline pl;
     pl.setConfig(config);

@@ -21,7 +21,7 @@ template <class T>
 Buffer<T>::Buffer(int width, int height)
     :w(width),h(height)
 {
-    data = new T[width * height];
+    data = new T[w * h];
 }
 
 template <class T>

@@ -1,6 +1,6 @@
 #include "core/fragshader.h"
 #include "core/vertex.h"
-#include <cassert>
+
 FragShader::FragShader()
 {
 }
@@ -8,13 +8,13 @@ FragShader::FragShader()
 // called once for every pixel
 void FragShader::execute(PointObject *point, Triangle *t)
 {
-    frag_color = iterationCompute(*point,*t);
+    frag_color = handle(*point,*t);
 }
 
-void FragShader::setIterationCompute(vec3 (*iterationCompute)(PointObject &,
-                                                              Triangle &))
+void FragShader::setHandle(vec3 (*iterationCompute)(PointObject &,
+                                                    Triangle &))
 {
-    this->iterationCompute = iterationCompute;
+    this->handle = iterationCompute;
 }
 
 vec3 FragShader::fragColor() const

@@ -210,7 +210,7 @@ int main()
     vs->setIterationTimes(times);
 
     FragShader *fs = new FragShader;
-    fs->setIterationCompute(&FragShaderIterCompute);
+    fs->setHandle(&FragShaderIterCompute);
 
     Pipeline::Config config;
     config.height = height;

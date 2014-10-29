@@ -37,6 +37,11 @@ void ZBuffer::execute()
         return;
     }
 
+    if (!fragShader){
+        std::cerr << "null fragment shader! "<<std::endl;
+        return;
+    }
+
     int size;
     Triangle *data;
     if (!GPUMemory::retrieve<Triangle>(Constant::SF_CLIPOUT,size,data)){
@@ -52,7 +57,7 @@ void ZBuffer::execute()
     float near = 1.0f;
 
     // TODO parallel
-    for (int i = 0; i < size; ++i) {
+    for (auto i = 0; i < size; ++i) {
 
         // for each triangle
         Triangle &originalTri = data[i];
@@ -96,13 +101,11 @@ void ZBuffer::execute()
         const float deltaZX = - normal.x/normal.z;
         const float deltaZY = - normal.y/normal.z;
 
-        // TODO parallel
         // attention: scan line operate on window coordinate
         // form low y to high y(bottom to up)
-
         int int_min = fmax(round(vec2_min.y),0);
         int int_max = fmin(round(vec2_max.y),height);
-
+#pragma omp parallel for num_threads(16)
         for (auto scanLine =int_min; scanLine <int_max ;++scanLine) {
 
             // z' = z + B/C*delta
@@ -118,15 +121,12 @@ void ZBuffer::execute()
                 float zResult  = z + deltaZX * (x-vec2_min.x);
                 processBuffer(x,scanLine,zResult,tri);
             }
-
             // two point
-            if (result.size()==2) {
+            else if (result.size()==2) {
                 int begin = *(result.begin());
                 int end = *(--result.end());
                 if (begin>end)
                     std::swap(begin,end);
-
-                // TODO: parallel
                 // for each pixel between point
 #pragma omp parallel for
                 for (auto x = begin; x <= end; ++x) {
@@ -158,6 +158,7 @@ void ZBuffer::processBuffer(float x, float y, float zValue, Triangle &t)
     float &z = frameBuffer->zBuffer->dataAt(_x,_y);
 
     if (zValue < z){
+        z = zValue;
 
         PointObject point;
         point.x = _x;
@@ -183,16 +184,11 @@ void ZBuffer::processBuffer(float x, float y, float zValue, Triangle &t)
         }
 
         //TODO u v not satisfied u >= 0 , v >=0; u+v <=1
-//        PointObject::interpolate(t.p1,t.p2,t.p3,point,u,v);
+        PointObject::interpolate(t.p1,t.p2,t.p3,point,u,v);
 
-        if (!fragShader){
-            std::cerr << "Warning: null fragment shader! "<<std::endl;
-        }
-        else {
-            fragShader->execute(&point,&t);
-            auto color = fragShader->fragColor();
-            frameBuffer->colorBuffer->dataAt(_x,_y) = color;
-        }
+        fragShader->execute(&point,&t);
+        auto color = fragShader->fragColor();
+        frameBuffer->colorBuffer->dataAt(_x,_y) = color;
     }
 
 }

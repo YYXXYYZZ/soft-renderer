@@ -92,6 +92,10 @@ void Pipeline::setConfig(const Config &value)
     makeFrameBuffer();
 }
 
+
+#include <ctime>
+#include <cstdio>
+
 void Pipeline::render()
 {
     if (!vertShader) {
@@ -104,12 +108,36 @@ void Pipeline::render()
         return;
     }
 
+    clock_t start,end;
+    start = clock();
     vertShader->execute();
+    end = clock();
+    double dur = (double)(end - start);
+    printf("vertShader Use Time:%f\n",(dur/CLOCKS_PER_SEC));
     //TODO fix me :6
+    start = clock();
     primitive->setup(config.primitiveType,36);
+    end = clock();
+    dur = (double)(end - start);
+    printf("primitive Use Time:%f\n",(dur/CLOCKS_PER_SEC));
+
+    start = clock();
     clipper->execute();
+    end = clock();
+    dur = (double)(end - start);
+    printf("clipper Use Time:%f\n",(dur/CLOCKS_PER_SEC));
+
+    start = clock();
     culler->execute();
+    end = clock();
+    dur = (double)(end - start);
+    printf("culler Use Time:%f\n",(dur/CLOCKS_PER_SEC));
+
+    start = clock();
     zbuffer->execute();
+    end = clock();
+    dur = (double)(end - start);
+    printf("zbuffer Use Time:%f\n",(dur/CLOCKS_PER_SEC));
 }
 
 /**

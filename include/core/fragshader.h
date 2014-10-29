@@ -12,21 +12,16 @@ class FragShader : public Shader
 {
 public:
     FragShader();
-
-    virtual void execute(PointObject *point, Triangle *t);
-    void setIterationCompute(vec3 (*iterationCompute)(PointObject &,Triangle &));
-
-
+    void setHandle(vec3 (*handle)(PointObject &,Triangle &));
     vec3 fragColor() const;
 
 private:
-    vec3 (*iterationCompute)(PointObject &point,Triangle &t);
+    void execute(PointObject *point, Triangle *t);
+    vec3 (*handle)(PointObject &point,Triangle &t);
     void setArgument(PointObject *point, Triangle *t);
-
     vec3 frag_color;
 
     friend class ZBuffer;
-
 };
 
 #endif // FRAGSHADER_H

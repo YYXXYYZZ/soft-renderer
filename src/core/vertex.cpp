@@ -1,5 +1,6 @@
 #include "core/vertex.h"
 #include <cstring>
+#include <core/primitive.h>
 
 // TODO use Perspective-Correct Interpolation instead of
 // linear interpolation
@@ -19,6 +20,15 @@ T interpolatePrivate(const T&v1,const T&v2,const T&v3,float &alpha,float &beta)
     return r;
 }
 
+// perspective-correct interpolation see glspec44 p.429 formula 14.9
+template<class T>
+T interpolatePrivate(const T&v1,const T&v2,const T&v3,float &alpha,float &beta,float &gamma)
+{
+    T r;
+    r = (v1*alpha+v2*beta+v3*gamma)/(alpha+beta+gamma);
+    return r;
+}
+
 template <>
 vec2 interpolatePrivate<vec2>(const vec2&v1,const vec2&v2,float &alpha)
 {
@@ -31,6 +41,7 @@ vec2 interpolatePrivate<vec2>(const vec2&v1,const vec2&v2,float &alpha)
                              alpha);
     return v;
 }
+
 template <>
 vec2 interpolatePrivate(const vec2&v1,const vec2&v2,const vec2&v3,float &alpha,float &beta)
 {
@@ -45,6 +56,24 @@ vec2 interpolatePrivate(const vec2&v1,const vec2&v2,const vec2&v3,float &alpha,f
                              v3.y,
                              alpha,
                              beta);
+    return v;
+}
+template <>
+vec2 interpolatePrivate(const vec2&v1,const vec2&v2,const vec2&v3,float &alpha,float &beta,float &gamma)
+{
+    vec2 v;
+    v.x = interpolatePrivate(v1.x,
+                             v2.x,
+                             v3.x,
+                             alpha,
+                             beta,
+                             gamma);
+    v.y = interpolatePrivate(v1.y,
+                             v2.y,
+                             v3.y,
+                             alpha,
+                             beta,
+                             gamma);
     return v;
 }
 
@@ -75,14 +104,39 @@ vec3 interpolatePrivate<vec3>(const vec3&v1,const vec3&v2,const vec3&v3,float &a
                              beta);
     v.y = interpolatePrivate(v1.y,
                              v2.y,
-                             v3.x,
+                             v3.y,
                              alpha,
                              beta);
     v.z = interpolatePrivate(v1.z,
                              v2.z,
-                             v3.x,
+                             v3.z,
                              alpha,
                              beta);
+    return v;
+}
+
+template <>
+vec3 interpolatePrivate<vec3>(const vec3&v1,const vec3&v2,const vec3&v3,float &alpha,float &beta,float &gamma)
+{
+    vec3 v;
+    v.x = interpolatePrivate(v1.x,
+                             v2.x,
+                             v3.x,
+                             alpha,
+                             beta,
+                             gamma);
+    v.y = interpolatePrivate(v1.y,
+                             v2.y,
+                             v3.y,
+                             alpha,
+                             beta,
+                             gamma);
+    v.z = interpolatePrivate(v1.z,
+                             v2.z,
+                             v3.z,
+                             alpha,
+                             beta,
+                             gamma);
     return v;
 }
 
@@ -116,22 +170,52 @@ vec4 interpolatePrivate<vec4>(const vec4&v1,const vec4&v2,const vec4&v3,float &a
                              beta);
     v.y = interpolatePrivate(v1.y,
                              v2.y,
-                             v3.x,
+                             v3.y,
                              alpha,
                              beta);
     v.z = interpolatePrivate(v1.z,
                              v2.z,
-                             v3.x,
+                             v3.z,
                              alpha,
                              beta);
     v.w = interpolatePrivate(v1.w,
                              v2.w,
-                             v3.x,
+                             v3.w,
                              alpha,
                              beta);
     return v;
 }
 
+template <>
+vec4 interpolatePrivate<vec4>(const vec4&v1,const vec4&v2,const vec4&v3,float &alpha,float &beta,float &gamma)
+{
+    vec4 v;
+    v.x = interpolatePrivate(v1.x,
+                             v2.x,
+                             v3.x,
+                             alpha,
+                             beta,
+                             gamma);
+    v.y = interpolatePrivate(v1.y,
+                             v2.y,
+                             v3.y,
+                             alpha,
+                             beta,
+                             gamma);
+    v.z = interpolatePrivate(v1.z,
+                             v2.z,
+                             v3.z,
+                             alpha,
+                             beta,
+                             gamma);
+    v.w = interpolatePrivate(v1.w,
+                             v2.w,
+                             v3.w,
+                             alpha,
+                             beta,
+                             gamma);
+    return v;
+}
 
 
 PointObject::PointObject()
@@ -237,7 +321,7 @@ glm::vec4 PointObject::getAttachVec4(const std::string &name) const
 
 void PointObject::interpolate(const PointObject &v1,
                               const PointObject &v2,
-                              PointObject &out, float alpha)
+                              PointObject &p, float alpha)
 {
     assert(v1.p_attach->v_int.size() == v2.p_attach->v_int.size());
     assert(v1.p_attach->v_float.size() == v2.p_attach->v_float.size());
@@ -245,14 +329,14 @@ void PointObject::interpolate(const PointObject &v1,
     assert(v1.p_attach->v_vec3.size() == v2.p_attach->v_vec3.size());
     assert(v1.p_attach->v_vec4.size() == v2.p_attach->v_vec4.size());
 
-    out.p_attach = shared_ptr<Attachment>(new Attachment);
+    p.p_attach = shared_ptr<Attachment>(new Attachment);
 
     for (auto i = v1.p_attach->v_int.begin(); i != v1.p_attach->v_int.end(); ++i) {
         string name = i->first;
         auto vaule = interpolatePrivate(v1.p_attach->v_int.at(name),
                                         v2.p_attach->v_int.at(name),
                                         alpha);
-        out.setAttachInt(name,vaule);
+        p.setAttachInt(name,vaule);
     }
 
     for (auto i = v1.p_attach->v_float.begin(); i != v1.p_attach->v_float.end(); ++i) {
@@ -260,7 +344,7 @@ void PointObject::interpolate(const PointObject &v1,
         auto vaule = interpolatePrivate(v1.p_attach->v_float.at(name),
                                         v2.p_attach->v_float.at(name),
                                         alpha);
-        out.setAttachFloat(name,vaule);
+        p.setAttachFloat(name,vaule);
     }
 
     for (auto i = v1.p_attach->v_vec2.begin(); i !=v1.p_attach->v_vec2.end(); ++i) {
@@ -268,7 +352,7 @@ void PointObject::interpolate(const PointObject &v1,
         auto vaule = interpolatePrivate(v1.p_attach->v_vec2.at(name),
                                         v2.p_attach->v_vec2.at(name),
                                         alpha);
-        out.setAttachVec2(name,vaule);
+        p.setAttachVec2(name,vaule);
     }
 
     for (auto i = v1.p_attach->v_vec3.begin(); i != v1.p_attach->v_vec3.end(); ++i) {
@@ -276,7 +360,7 @@ void PointObject::interpolate(const PointObject &v1,
         auto vaule = interpolatePrivate(v1.p_attach->v_vec3.at(name),
                                         v2.p_attach->v_vec3.at(name),
                                         alpha);
-        out.setAttachVec3(name,vaule);
+        p.setAttachVec3(name,vaule);
     }
 
     for (auto i = v1.p_attach->v_vec4.begin(); i != v1.p_attach->v_vec4.end(); ++i) {
@@ -284,14 +368,14 @@ void PointObject::interpolate(const PointObject &v1,
         auto vaule = interpolatePrivate(v1.p_attach->v_vec4.at(name),
                                         v2.p_attach->v_vec4.at(name),
                                         alpha);
-        out.setAttachVec4(name,vaule);
+        p.setAttachVec4(name,vaule);
     }
 }
 
 void PointObject::interpolate(const PointObject &v1,
                               const PointObject &v2,
                               const PointObject &v3,
-                              PointObject &out,
+                              PointObject &p,
                               float &alpha,
                               float &beta)
 {
@@ -303,7 +387,7 @@ void PointObject::interpolate(const PointObject &v1,
     assert(v1.p_attach->v_vec3.size() == v2.p_attach->v_vec3.size());
     assert(v1.p_attach->v_vec4.size() == v2.p_attach->v_vec4.size());
 
-    out.p_attach = shared_ptr<Attachment>(new Attachment);
+    p.p_attach = shared_ptr<Attachment>(new Attachment);
 
     for (auto i = v1.p_attach->v_int.begin(); i != v1.p_attach->v_int.end(); ++i) {
         string name = i->first;
@@ -312,7 +396,7 @@ void PointObject::interpolate(const PointObject &v1,
                                         v3.p_attach->v_int.at(name),
                                         alpha,
                                         beta);
-        out.setAttachInt(name,vaule);
+        p.setAttachInt(name,vaule);
     }
 
     for (auto i = v1.p_attach->v_float.begin(); i != v1.p_attach->v_float.end(); ++i) {
@@ -322,7 +406,7 @@ void PointObject::interpolate(const PointObject &v1,
                                         v3.p_attach->v_float.at(name),
                                         alpha,
                                         beta);
-        out.setAttachFloat(name,vaule);
+        p.setAttachFloat(name,vaule);
     }
 
     for (auto i = v1.p_attach->v_vec2.begin(); i !=v1.p_attach->v_vec2.end(); ++i) {
@@ -332,7 +416,7 @@ void PointObject::interpolate(const PointObject &v1,
                                         v3.p_attach->v_vec2.at(name),
                                         alpha,
                                         beta);
-        out.setAttachVec2(name,vaule);
+        p.setAttachVec2(name,vaule);
     }
 
     for (auto i = v1.p_attach->v_vec3.begin(); i != v1.p_attach->v_vec3.end(); ++i) {
@@ -342,7 +426,7 @@ void PointObject::interpolate(const PointObject &v1,
                                         v3.p_attach->v_vec3.at(name),
                                         alpha,
                                         beta);
-        out.setAttachVec3(name,vaule);
+        p.setAttachVec3(name,vaule);
     }
 
     for (auto i = v1.p_attach->v_vec4.begin(); i != v1.p_attach->v_vec4.end(); ++i) {
@@ -352,10 +436,85 @@ void PointObject::interpolate(const PointObject &v1,
                                         v3.p_attach->v_vec4.at(name),
                                         alpha,
                                         beta);
-        out.setAttachVec4(name,vaule);
+        p.setAttachVec4(name,vaule);
     }
 
 }
+
+void PointObject::interpolate(PointObject &p,const Triangle&t)
+{
+    p.p_attach = shared_ptr<Attachment>(new Attachment);
+
+    float alpha;
+    float beta;
+    float gamma;
+
+    const PointObject &a = t.p1;
+    const PointObject &b = t.p2;
+    const PointObject &c = t.p3;
+
+    float den = 1 / ((b.y - c.y) * (a.x - c.x) + (c.x - b.x) * (a.y - c.y));
+
+    alpha = ((b.y - c.y) * (p.x - c.x) + (c.x - b.x) * (p.y - c.y)) * den;
+    beta = ((c.y - a.y) * (p.x - c.x) + (a.x - c.x) * (p.y - c.y)) * den;
+    gamma = 1 - alpha - beta;
+
+    for (auto i = t.p1.p_attach->v_int.begin(); i != t.p1.p_attach->v_int.end(); ++i) {
+        string name = i->first;
+        auto vaule = interpolatePrivate(t.p1.p_attach->v_int.at(name),
+                                        t.p2.p_attach->v_int.at(name),
+                                        t.p3.p_attach->v_int.at(name),
+                                        alpha,
+                                        beta,
+                                        gamma);
+        p.setAttachInt(name,vaule);
+    }
+
+    for (auto i = t.p1.p_attach->v_float.begin(); i != t.p1.p_attach->v_float.end(); ++i) {
+        string name = i->first;
+        auto vaule = interpolatePrivate(t.p1.p_attach->v_float.at(name),
+                                        t.p2.p_attach->v_float.at(name),
+                                        t.p3.p_attach->v_float.at(name),
+                                        alpha,
+                                        beta,
+                                        gamma);
+        p.setAttachFloat(name,vaule);
+    }
+
+    for (auto i = t.p1.p_attach->v_vec2.begin(); i !=t.p1.p_attach->v_vec2.end(); ++i) {
+        string name = i->first;
+        auto vaule = interpolatePrivate(t.p1.p_attach->v_vec2.at(name),
+                                        t.p2.p_attach->v_vec2.at(name),
+                                        t.p3.p_attach->v_vec2.at(name),
+                                        alpha,
+                                        beta,
+                                        gamma);
+        p.setAttachVec2(name,vaule);
+    }
+
+    for (auto i = t.p1.p_attach->v_vec3.begin(); i != t.p1.p_attach->v_vec3.end(); ++i) {
+        string name = i->first;
+        auto vaule = interpolatePrivate(t.p1.p_attach->v_vec3.at(name),
+                                        t.p2.p_attach->v_vec3.at(name),
+                                        t.p3.p_attach->v_vec3.at(name),
+                                        alpha,
+                                        beta,
+                                        gamma);
+        p.setAttachVec3(name,vaule);
+    }
+
+    for (auto i = t.p1.p_attach->v_vec4.begin(); i != t.p1.p_attach->v_vec4.end(); ++i) {
+        string name = i->first;
+        auto vaule = interpolatePrivate(t.p1.p_attach->v_vec4.at(name),
+                                        t.p2.p_attach->v_vec4.at(name),
+                                        t.p3.p_attach->v_vec4.at(name),
+                                        alpha,
+                                        beta,
+                                        gamma);
+        p.setAttachVec4(name,vaule);
+    }
+}
+
 
 void PointObject::setPos(const glm::vec4 &v)
 {

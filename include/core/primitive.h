@@ -21,6 +21,8 @@ struct Point{
 struct Line{
     vec4 p1;
     vec4 p2;
+
+    static void bresenham(vec2 begin,vec2 end,std::set<int> &result);
 };
 
 struct Triangle{

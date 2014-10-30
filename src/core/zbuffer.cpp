@@ -67,7 +67,8 @@ void ZBuffer::execute()
         }
 
         glm::vec3 normal = originalTri.normal();
-        // Ax+By+Cz+D=0 if C =0 we think the plane is far enough
+        // Ax+By+Cz+D=0 if C =0 we
+        // think the plane is far enough
         // skip
         if(normal.z==0){
             continue;
@@ -87,7 +88,9 @@ void ZBuffer::execute()
             vert.x = width/2*vert.x + x + width/2;
             vert.y = height/2*vert.y + y + height/2;
             vert.z = (far-near)/2*vert.z + (far + near)/2;
-            vert.w = 1.0f;
+
+            // do not change w, this will be used in interpolation
+            //vert.w = 1.0f;
         }
 
         vec2 vec2_min;
@@ -117,7 +120,7 @@ void ZBuffer::execute()
 
             // one point
             if (result.size()==1) {
-                float x = *result.begin();
+                int x = *result.begin();
                 float zResult  = z + deltaZX * (x-vec2_min.x);
                 processBuffer(x,scanLine,zResult,tri);
             }
@@ -150,10 +153,8 @@ void ZBuffer::setFragShader(FragShader *value)
     fragShader = value;
 }
 
-void ZBuffer::processBuffer(float x, float y, float zValue, Triangle &t)
+void ZBuffer::processBuffer(int _x, int _y, float zValue, Triangle &t)
 {
-    int _x = round(x);
-    int _y = round(y);
 
     float &z = frameBuffer->zBuffer->dataAt(_x,_y);
 
@@ -164,27 +165,7 @@ void ZBuffer::processBuffer(float x, float y, float zValue, Triangle &t)
         point.x = _x;
         point.y = _y;
 
-        float A = x - t.p1.x;
-        float B = t.p2.x - t.p1.x;
-        float C = t.p3.x - t.p1.x;
-        float D = y - t.p1.y;
-        float E = t.p2.y - t.p1.y;
-        float F = t.p3.y - t.p1.y;
-
-        float v;
-        float u;
-
-        if (B==0) {
-            v = A/C;
-            u = (D-v*F)/ E;
-        }
-        else {
-            v = (D*B - A*E) / (F*B - C*E);
-            u = (A - v*C) / B;
-        }
-
-        //TODO u v not satisfied u >= 0 , v >=0; u+v <=1
-        PointObject::interpolate(t.p1,t.p2,t.p3,point,u,v);
+        PointObject::interpolate(point,t);
 
         fragShader->execute(&point,&t);
         auto color = fragShader->fragColor();
@@ -192,8 +173,3 @@ void ZBuffer::processBuffer(float x, float y, float zValue, Triangle &t)
     }
 
 }
-
-
-
-
-

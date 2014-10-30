@@ -21,7 +21,7 @@ public:
 private:
     FragShader *fragShader;
     FrameBuffer *frameBuffer;
-    void processBuffer(float x, float y, float zValue, Triangle &t);
+    void processBuffer(int _x, int _y, float zValue, Triangle &t);
 };
 
 #endif // ZBUFFER_H

@@ -13,6 +13,9 @@ using std::map;
 using std::string;
 using std::shared_ptr;
 
+
+struct Triangle;
+
 struct Attachment{
     map<string,int> v_int;
     map<string,float> v_float;
@@ -56,6 +59,8 @@ public:
                             PointObject &out,
                             float &alpha,
                             float &beta);
+
+   static void interpolate(PointObject &p,const Triangle&t);
 
 
     void setPos(const vec4&v);

@@ -92,11 +92,11 @@ void ZBuffer::execute()
 
         vec2 vec2_min;
         vec2 vec2_max;
-        tri.extremeValue(vec2_min,vec2_max);
+        tri.extremum(vec2_min,vec2_max);
 
         // attention: initial zValue in normalized coordinate
         // find that point
-        glm::vec4 downPoint = originalTri.downPoint();
+        glm::vec4 downPoint = originalTri.lowestYPoint();
         const float zValue = downPoint.z;
         const float deltaZX = - normal.x/normal.z;
         const float deltaZY = - normal.y/normal.z;

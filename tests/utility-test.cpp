@@ -5,9 +5,9 @@ using namespace std;
 ostream & operator <<(ostream &os,const Triangle &t){
 
     os << "========================\n";
-    os << t.p1.getPos()[0] <<" " << t.p1.getPos()[1] << " " << t.p1.getPos()[2] << endl;
-    os << t.p2.getPos()[0] <<" " << t.p2.getPos()[1] << " " << t.p2.getPos()[2] << endl;
-    os << t.p3.getPos()[0] <<" " << t.p3.getPos()[1] << " " << t.p3.getPos()[2] << endl;
+    os << t.p1.pos()[0] <<" " << t.p1.pos()[1] << " " << t.p1.pos()[2] << endl;
+    os << t.p2.pos()[0] <<" " << t.p2.pos()[1] << " " << t.p2.pos()[2] << endl;
+    os << t.p3.pos()[0] <<" " << t.p3.pos()[1] << " " << t.p3.pos()[2] << endl;
     os << "========================\n";
     return os;
 }

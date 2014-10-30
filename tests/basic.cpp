@@ -224,8 +224,8 @@ int main()
     pl.attachFragShader(fs);
     pl.render();
 
-//    sf::Clock clock;
-//    clock.restart();
+    sf::Clock clock;
+    clock.restart();
     while(window.isOpen()){
         sf::Event event;
         while(window.pollEvent(event)){
@@ -284,15 +284,16 @@ int main()
 
                 glm::mat4 translate = glm::translate(glm::mat4(1),vec3(col));
                 MVP = translate * MVP;
-                pl.update();
             }
-            glDrawPixels(width,height,GL_RGB,GL_FLOAT,pl.getColorBuffer());
-            window.display();
+
         }
 
-//        float fps = 1.f / clock.getElapsedTime().asSeconds();
-//        std::cout << "fps" << fps << std::endl;
-//        clock.restart();
+        pl.update();
+        glDrawPixels(width,height,GL_RGB,GL_FLOAT,pl.getColorBuffer());
+        window.display();
+        float fps = 1.f / clock.getElapsedTime().asSeconds();
+        std::cout << "fps" << fps << std::endl;
+        clock.restart();
     }
 
 

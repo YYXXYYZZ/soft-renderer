@@ -59,7 +59,7 @@ public:
 
 
     void setPos(const vec4&v);
-    vec4 getPos() const;
+    vec4 pos() const;
 
     float distanceTo(const PointObject &other);
 

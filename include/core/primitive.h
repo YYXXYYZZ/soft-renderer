@@ -26,17 +26,17 @@ struct Line{
 struct Triangle{
 
     vec3 normal() const;
-    vec4 downPoint() const;
+    vec4 lowestYPoint() const;
     bool inside(PointObject p) const;
-    void extremeValue(vec2 &_min, vec2 &_max) const;
-    void intersect(float y,float min_x,float max_x, std::set<float> &result);
+    void extremum(vec2 &_min, vec2 &_max) const;
+    void intersect(float y,float min_x,float max_x,
+                   std::set<float> &result);
     void perspectiveDivide();
 
     PointObject p1;
     PointObject p2;
     PointObject p3;
     bool backFacing;
-
 };
 
 class Primitive

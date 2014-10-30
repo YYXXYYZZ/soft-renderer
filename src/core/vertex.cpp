@@ -168,7 +168,7 @@ PointObject &PointObject::operator=(const PointObject &other)
 
 bool PointObject::operator!=(const PointObject &other)
 {
-    return getPos()!=other.getPos();
+    return pos()!=other.pos();
 }
 
 PointObject &PointObject::operator/(float scale)
@@ -365,7 +365,7 @@ void PointObject::setPos(const glm::vec4 &v)
     w = v.w;
 }
 
-glm::vec4 PointObject::getPos() const
+glm::vec4 PointObject::pos() const
 {
     return vec4(x,y,z,w);
 }

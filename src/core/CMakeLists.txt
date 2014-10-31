@@ -29,6 +29,7 @@ set(SRC
     ${SRCROOT}/fragshader.cpp
     ${INCROOT}/fragshader.h
     ${INCROOT}/constant.h
+    ${INCROOT}/helper.h
 )
 SET(BUILD_SHARED_LIBS ON)
 source_group("" FILES ${SRC})

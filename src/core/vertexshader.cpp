@@ -18,12 +18,12 @@ void VertexShader::execute()
     }
 }
 
-void VertexShader::setIterationCompute(void (*iterationCompute)(int))
+void VertexShader::setHandle(void (*iterationCompute)(int))
 {
     this->iterationCompute = iterationCompute;
 }
 
-void VertexShader::setIterationTimes(int value)
+void VertexShader::setHandleTimes(int value)
 {
     this->times = value;
 }

@@ -8,6 +8,9 @@ SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/../build)
 add_executable(${PROJECT_NAME} basic.cpp)
 target_link_libraries(${PROJECT_NAME} sf-core sfml-graphics sfml-window sfml-system GLEW GL)
 
+add_executable(model-test model-test.cpp)
+target_link_libraries(model-test sf-core glfw3 gl)
+
 add_executable(shader-test shader-test.cpp)
 target_link_libraries(shader-test sf-core)
 

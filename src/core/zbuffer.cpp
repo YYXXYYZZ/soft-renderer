@@ -136,7 +136,6 @@ void ZBuffer::execute()
                     float zResult = z + deltaZX * (x-vec2_min.x);
                     processBuffer(x,scanLine,zResult,tri);
                 }
-
             }
 
         }

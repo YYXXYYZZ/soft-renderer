@@ -32,15 +32,15 @@ void SHClipper::Sutherland_Hodgman()
         input->push_back(triangle[i].p2);
         input->push_back(triangle[i].p3);
 
-        for (int b = Left; b <= Far; ++b) {
-            clip(*input,*output,static_cast<Boundary>(b));
-            swap(input,output);
-            output->clear();
-        }
+//        for (int b = Left; b <= Far; ++b) {
+//            clip(*input,*output,static_cast<Boundary>(b));
+//            swap(input,output);
+//            output->clear();
+//        }
 
-        if (input->size()>3) {
-            polygonToTriangle(*input,outPrimitive);
-        }
+//        if (input->size()>3) {
+//            polygonToTriangle(*input,outPrimitive);
+//        }
 
         if (input->size()==3) {
             Triangle tri;
@@ -50,7 +50,7 @@ void SHClipper::Sutherland_Hodgman()
             outPrimitive.push_back(tri);
         }
         // size less than 3?
-        // impossiable, skip
+        // impossible, skip
         delete input;
         delete output;
     }

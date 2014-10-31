@@ -46,7 +46,7 @@ bool Primitive::setup(PrimitiveType type, int count)
     return true;
 }
 
-bool Primitive::setupByIndex(PrimitiveType type, int count)
+bool Primitive::setupByIndex(PrimitiveType type)
 {
     bool error = GPUMemory::retrieve(Constant::SF_POSITION,vertexCount,verteices);
     if(!error){
@@ -59,6 +59,25 @@ bool Primitive::setupByIndex(PrimitiveType type, int count)
         return false;
     }
 
+    switch (type) {
+    case TRIANGLES:{
+        Triangle* objects;
+        int size = indexSize/3;
+        GPUMemory::alloc(Constant::SF_PRIMITIVESETUPOUT,
+                         size,
+                         objects);
+
+#pragma omp parallel for
+        for (int i = 0; i < size; i++) {
+            objects[i].p1 = verteices[indexData[i*3]];
+            objects[i].p2 = verteices[indexData[i*3+1]];
+            objects[i].p3 = verteices[indexData[i*3+2]];
+        }
+    }
+        break;
+    default:
+        break;
+    }
 
     return true;
 }

@@ -15,8 +15,8 @@ public:
     // iterationTimes will return how many times iterationCompute will
     // calld. iterationCompute should be called paralleled which will
     // simulate main function in shader.
-    void setIterationCompute(void (*iterationCompute)(int step));
-    void setIterationTimes(int value);
+    void setHandle(void (*iterationCompute)(int step));
+    void setHandleTimes(int value);
 
 private:
     void (*iterationCompute)(int step);

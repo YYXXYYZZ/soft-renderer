@@ -8,7 +8,7 @@ class FragShader;
 class ZBuffer;
 class Culler;
 class Clipper;
-struct FrameBuffer;
+class FrameBuffer;
 
 class Pipeline
 {
@@ -18,6 +18,7 @@ public:
         int height;
         glm::vec3 clearColor;
         PrimitiveType primitiveType;
+        bool renderByIndex;
     };
 
     Pipeline();
@@ -28,11 +29,10 @@ public:
     void update();
     void attachVertShader(VertexShader *vShader);
     void attachFragShader(FragShader *fShader);
+    vec3 *getColorBuffer() const;
 
     Config getConfig() const;
     void setConfig(const Config &value);
-
-    vec3 *getColorBuffer() const;
 
 private:
     Config config;

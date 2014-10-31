@@ -46,7 +46,7 @@ class Primitive
 public:
     Primitive();
     bool setup(PrimitiveType type,int count);
-    bool setupByIndex(PrimitiveType type,int count);
+    bool setupByIndex(PrimitiveType type);
 
 private:
     PointObject *verteices;

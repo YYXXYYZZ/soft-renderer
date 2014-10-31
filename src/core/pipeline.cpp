@@ -60,7 +60,8 @@ void Pipeline::setConfig(const Config &value)
     config = value;
     if(frameBuffer)
         delete frameBuffer;
-    frameBuffer = new FrameBuffer(config.width,config.height,config.clearColor);
+    frameBuffer = new FrameBuffer(config.width,config.height,
+                                  config.clearColor);
     zbuffer->setFrameBuffer(frameBuffer);
 }
 
@@ -86,9 +87,14 @@ void Pipeline::render()
     end = clock();
     double dur = (double)(end - start);
     printf("vertShader Use Time:%f\n",(dur/CLOCKS_PER_SEC));
-    //TODO fix me :6
     start = clock();
-    primitive->setup(config.primitiveType,36);
+    if (config.renderByIndex) {
+        primitive->setupByIndex(config.primitiveType);
+    }
+    else {
+        //TODO fix me :6
+         primitive->setup(config.primitiveType,36);
+    }
     end = clock();
     dur = (double)(end - start);
     printf("primitive Use Time:%f\n",(dur/CLOCKS_PER_SEC));

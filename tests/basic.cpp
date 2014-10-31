@@ -161,20 +161,20 @@ void initialize()
     GPUMemory::memoryCopy("positions",sizeof(positions)/sizeof(float),positions);
     GPUMemory::memoryCopy("color",sizeof(color)/sizeof(float),color);
 
-    glm::mat4 model = glm::rotate( glm::mat4(1.0f),45.0f,glm::vec3(1,0,0));
+    glm::mat4 model = glm::rotate( glm::mat4(1.0f),45.0f,glm::vec3(1,1,1));
     glm::mat4 view = glm::lookAt(glm::vec3(0.0f,0.0f,2.0f),
                                  glm::vec3(0.0f,0.0f,0.0f),
                                  glm::vec3(0.0f,0.1f,0.0f));
     glm::mat4 projection = glm::perspective(60.0f, (float)0.75, 0.3f, 100.0f);
-    MVP = projection *view *model;
+    MVP = /*projection *view **/model;
 
 }
 
-glm::vec3 FragShaderIterCompute(PointObject &p,Triangle &t){
+glm::vec3 computePerVertex(PointObject &p,Triangle &t){
     return p.getAttachVec3("color");
 }
 
-void iterationCompute(int step)
+void computePerVertex(int step)
 {
     glm::vec4 pos(_positions[step*3],
             _positions[step*3+1],
@@ -206,11 +206,11 @@ int main()
     initialize();
 
     VertexShader *vs = new VertexShader ;
-    vs->setIterationCompute(&iterationCompute);
-    vs->setIterationTimes(times);
+    vs->setHandle(&computePerVertex);
+    vs->setHandleTimes(times);
 
     FragShader *fs = new FragShader;
-    fs->setHandle(&FragShaderIterCompute);
+    fs->setHandle(&computePerVertex);
 
     Pipeline::Config config;
     config.height = height;

@@ -26,8 +26,6 @@ Pipeline::~Pipeline()
     delete primitive;
 
     if (frameBuffer){
-        delete frameBuffer->zBuffer;
-        delete frameBuffer->colorBuffer;
         delete frameBuffer;
     }
 
@@ -46,39 +44,10 @@ void Pipeline::attachFragShader(FragShader *fShader)
     fragShader = fShader;
     zbuffer->setFragShader(fShader);
 }
-FrameBuffer *Pipeline::getFrameBuffer() const
-{
-    return frameBuffer;
-}
-
-void Pipeline::setFrameBuffer(FrameBuffer *value)
-{
-    frameBuffer = value;
-}
 
 vec3 *Pipeline::getColorBuffer() const
 {
-    return frameBuffer->colorBuffer->buffer();
-}
-
-void Pipeline::makeFrameBuffer()
-{
-    frameBuffer = new FrameBuffer;
-    frameBuffer->w = config.width;
-    frameBuffer->h = config.height;
-    frameBuffer->zBuffer = new Buffer<float>(frameBuffer->w,frameBuffer->h);
-    frameBuffer->colorBuffer = new Buffer<vec3>(frameBuffer->w,frameBuffer->h);
-    fillFrameBuffer();
-    zbuffer->setFrameBuffer(frameBuffer);
-}
-
-void Pipeline::fillFrameBuffer()
-{
-#pragma omp parallel for
-    for (int i = 0; i < config.width*config.height; ++i) {
-        frameBuffer->zBuffer->buffer()[i] = FLT_MAX;
-        frameBuffer->colorBuffer->buffer()[i] = config.clearColor;
-    }
+    return frameBuffer->colorBuffer();
 }
 
 Pipeline::Config Pipeline::getConfig() const
@@ -89,7 +58,10 @@ Pipeline::Config Pipeline::getConfig() const
 void Pipeline::setConfig(const Config &value)
 {
     config = value;
-    makeFrameBuffer();
+    if(frameBuffer)
+        delete frameBuffer;
+    frameBuffer = new FrameBuffer(config.width,config.height,config.clearColor);
+    zbuffer->setFrameBuffer(frameBuffer);
 }
 
 
@@ -142,7 +114,7 @@ void Pipeline::render()
 
 /**
  * @brief Pipeline::clear remove unused memory
- *  this two invisible to client
+ *  this two global variable should invisible to client
  */
 void Pipeline::clear()
 {
@@ -153,7 +125,7 @@ void Pipeline::clear()
 void Pipeline::update()
 {
     clear();
-    fillFrameBuffer();
+    frameBuffer->clearBuffer();
     render();
 }
 

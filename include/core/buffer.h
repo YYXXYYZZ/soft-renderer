@@ -9,7 +9,7 @@ class Buffer
 public:
     Buffer(int width,int height);
     ~Buffer();
-    T& dataAt(int x,int y);
+    inline T& dataAt(int x,int y);
     T * buffer();
 private:
     int w;
@@ -44,12 +44,22 @@ T *Buffer<T>::buffer()
     return data;
 }
 
-struct FrameBuffer
+class FrameBuffer
 {
-    int w;
-    int h;
-    Buffer<float> *zBuffer;
-    Buffer<vec3> *colorBuffer;
+public:
+    FrameBuffer(int width,int height,vec3 clearColor);
+    ~FrameBuffer();
+
+    vec3 *colorBuffer() const;
+    void clearBuffer() const;
+private:
+    int _width;
+    int _height;
+    vec3 _clearColor;
+    Buffer<float> *_zBuffer;
+    Buffer<vec3> *_colorBuffer;
+
+    friend class ZBuffer;
 };
 
 #endif // BUFFER_H

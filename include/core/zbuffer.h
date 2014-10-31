@@ -8,15 +8,13 @@ class ZBuffer
 {
 public:
     ZBuffer();
+    void execute();
 
     FrameBuffer *getFrameBuffer() const;
     void setFrameBuffer(FrameBuffer *value);
 
     FragShader *getFragShader() const;
     void setFragShader(FragShader *value);
-
-    void execute();
-
 
 private:
     FragShader *fragShader;

@@ -3,12 +3,6 @@
 
 #include "primitive.h"
 
-enum ClipperType{
-    SutherlandHodgman,
-    WeilerAtherton
-};
-
-
 class VertexShader;
 class FragShader;
 class ZBuffer;
@@ -38,9 +32,6 @@ public:
     Config getConfig() const;
     void setConfig(const Config &value);
 
-    FrameBuffer *getFrameBuffer() const;
-    void setFrameBuffer(FrameBuffer *value);
-
     vec3 *getColorBuffer() const;
 
 private:
@@ -52,9 +43,6 @@ private:
     VertexShader *vertShader;
     FragShader *fragShader;
     FrameBuffer *frameBuffer;
-
-    void makeFrameBuffer();
-    void fillFrameBuffer();
 };
 
 

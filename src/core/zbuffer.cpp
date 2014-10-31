@@ -49,8 +49,8 @@ void ZBuffer::execute()
         return;
     }
 
-    int width = frameBuffer->w;
-    int height = frameBuffer->h;
+    int width = frameBuffer->_width;
+    int height = frameBuffer->_height;
     int x = 0;
     int y = 0;
     float far = -1.0f;
@@ -156,7 +156,7 @@ void ZBuffer::setFragShader(FragShader *value)
 void ZBuffer::processBuffer(int _x, int _y, float zValue, Triangle &t)
 {
 
-    float &z = frameBuffer->zBuffer->dataAt(_x,_y);
+    float &z = frameBuffer->_zBuffer->dataAt(_x,_y);
 
     if (zValue < z){
         z = zValue;
@@ -169,7 +169,7 @@ void ZBuffer::processBuffer(int _x, int _y, float zValue, Triangle &t)
 
         fragShader->execute(&point,&t);
         auto color = fragShader->fragColor();
-        frameBuffer->colorBuffer->dataAt(_x,_y) = color;
+        frameBuffer->_colorBuffer->dataAt(_x,_y) = color;
     }
 
 }

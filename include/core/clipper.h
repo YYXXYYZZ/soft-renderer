@@ -20,7 +20,7 @@ public:
 
 protected:
     Triangle *triangle;
-    int primitiveCount;
+    size_t primitiveCount;
     bool canClip;
 };
 

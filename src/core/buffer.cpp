@@ -18,7 +18,7 @@ FrameBuffer::~FrameBuffer()
 
 glm::vec3 *FrameBuffer::colorBuffer() const
 {
-    _colorBuffer->buffer();
+    return _colorBuffer->buffer();
 }
 
 

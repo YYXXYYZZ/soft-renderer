@@ -2,7 +2,7 @@
 #define ZBUFFER_H
 
 struct Triangle;
-struct FrameBuffer;
+class FrameBuffer;
 class FragShader;
 class ZBuffer
 {

@@ -7,6 +7,26 @@
 #include <algorithm>
 #include <cmath>
 
+
+
+#ifdef _MSC_VER
+
+float fmax(const float &v1,const float &v2){
+    return v1>v2?v1:v2;
+}
+
+float fmin(const float &v1,const float &v2){
+    return v1<v2?v1:v2;
+}
+
+float round(float d)
+{
+  return (float)floor(d + 0.5);
+}
+
+#endif
+
+
 /**
  * @brief ZBuffer::ZBuffer
  *        z-buffer take responsibility for 3 steps:
@@ -42,7 +62,7 @@ void ZBuffer::execute()
         return;
     }
 
-    int size;
+    size_t size;
     Triangle *data;
     if (!GPUMemory::retrieve<Triangle>(Constant::SF_CLIPOUT,size,data)){
         std::cerr << "failed to retrieve in ZBuffer::execute" << std::endl;
@@ -161,8 +181,8 @@ void ZBuffer::processBuffer(int _x, int _y, float zValue, Triangle &t)
         z = zValue;
 
         PointObject point;
-        point.x = _x;
-        point.y = _y;
+        point.x = (float)_x;
+        point.y = (float)_y;
 
         PointObject::interpolate(point,t);
 

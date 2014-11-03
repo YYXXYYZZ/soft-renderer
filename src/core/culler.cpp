@@ -9,7 +9,7 @@ Culler::Culler()
 
 void Culler::execute()
 {
-    int size;
+    size_t size;
     Triangle *data;
     if (!GPUMemory::retrieve<Triangle>(Constant::SF_CLIPOUT,size,data)){
         std::cerr << "retrieve Constant::SF_CLIPOUT failed" << std::endl;

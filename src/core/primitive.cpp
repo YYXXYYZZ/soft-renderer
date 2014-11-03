@@ -6,6 +6,14 @@
 #include <vector>
 #include <algorithm>
 
+
+#ifdef _MSC_VER
+float fmax(const float &v1,const float &v2);
+float fmin(const float &v1,const float &v2);
+float round(float d);
+#endif
+
+
 using std::vector;
 
 Primitive::Primitive()

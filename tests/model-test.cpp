@@ -6,14 +6,20 @@
 #include <core/constant.h>
 #include <core/vertexshader.h>
 #include <core/fragshader.h>
-#include <core/helper.h>
 #include <glm/gtc/matrix_transform.hpp>
+
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
+#include <vector>
 
 const int width = 500;
 const int height = 500;
 glm::mat4 MVP(1.0f);
-PointObject *vertices;
-
+PointObject *pointObjects;
+std::vector<float> meshVertices;
+std::vector<int> meshIndices;
 
 Pipeline pl;
 
@@ -23,28 +29,67 @@ glm::vec3 computePerPixel(PointObject &p,Triangle &t){
 
 void computePerVertex(int step)
 {
-    glm::vec4 pos(helper::vertices[step],1);
+    glm::vec4 pos(meshVertices[step],
+                  meshVertices[step+1],
+                  meshVertices[step+2],
+                  1);
 
-    glm::vec3 color(helper::colors[step]);
+//    glm::vec3 color(helper::colors[step]);
 
     pos = MVP * pos;
-    vertices[step].setPos(pos);
-    vertices[step].setAttachVec3("color",color);
+    pointObjects[step].setPos(pos);
+    pointObjects[step].setAttachVec3("color",vec3(0.25f,0.37f,0.66f));
 }
 
 void initializePipeline(){
 
-    helper::loadObj("bunny_color.obj");
 
-    int vertexCount = helper::vertices.size();
-    int vertexIndexCount  = helper::faces.size();
-    std::cout <<" cout M1+ : "<< vertexCount;
-    std::cout <<" cout M2+ : "<< helper::colors.size();
-    std::cout <<" cout M3+ : "<< vertexIndexCount;
-    int *indices;
-    GPUMemory::alloc(Constant::SF_POSITION,vertexCount,vertices);
-    GPUMemory::alloc(Constant::SF_POSITIONINDEX,vertexIndexCount,indices);
-    GPUMemory::memoryCopy(Constant::SF_POSITIONINDEX,vertexIndexCount,&helper::faces[0]);
+
+    Assimp::Importer importer;
+    const aiScene *scene = importer.ReadFile("bunny_color.obj",
+                                             aiProcess_CalcTangentSpace       |
+                                             aiProcess_Triangulate            |
+                                             aiProcess_JoinIdenticalVertices  |
+                                             aiProcess_SortByPType);
+
+    if (!scene)
+    {
+        std::cout << "import asset error!" << importer.GetErrorString() << std::endl;
+        exit(0);
+    }
+
+    if (!scene->HasMeshes()) {
+        std::cout << "the scene has no meshes!" << std::endl;
+        exit(0);
+    }
+
+
+
+    for (unsigned i = 0; i < scene->mNumMeshes; ++i) {
+        const aiMesh* paiMesh = scene->mMeshes[i];
+
+        for (unsigned j = 0; j < paiMesh->mNumVertices; ++j) {
+            const aiVector3D* pPos = &(paiMesh->mVertices[j]);
+            meshVertices.push_back(pPos->x);
+            meshVertices.push_back(pPos->y);
+            meshVertices.push_back(pPos->z);
+        }
+
+        for (unsigned j = 0; j < paiMesh->mNumFaces; ++j) {
+            const aiFace* pFaces = &(paiMesh->mFaces[j]);
+            for (unsigned k = 0; k < pFaces->mNumIndices; ++k) {
+                meshIndices.push_back(pFaces->mIndices[k]);
+            }
+        }
+    }
+
+
+    int *index;
+    size_t vertexCount = meshVertices.size();
+    size_t vertexIndexCount = meshIndices.size();
+    GPUMemory::alloc(Constant::SF_POSITION,vertexCount,pointObjects);
+    GPUMemory::alloc(Constant::SF_POSITIONINDEX,vertexIndexCount,index);
+    GPUMemory::memoryCopy(Constant::SF_POSITIONINDEX,vertexIndexCount,&meshIndices[0]);
 
 
     glm::mat4 model = glm::rotate( glm::mat4(1.0f),45.0f,glm::vec3(1,1,1));
@@ -52,12 +97,12 @@ void initializePipeline(){
                                  glm::vec3(0.0f,0.0f,0.0f),
                                  glm::vec3(0.0f,0.1f,0.0f));
     glm::mat4 projection = glm::perspective(60.0f, (float)0.75, 0.3f, 100.0f);
-////    MVP = /*projection *view **/model;
+    ////    MVP = /*projection *view **/model;
 
 
     VertexShader *vs = new VertexShader ;
     vs->setHandle(&computePerVertex);
-    vs->setHandleTimes(helper::vertices.size());
+    vs->setHandleTimes(vertexCount/3);
 
     FragShader *fs = new FragShader;
     fs->setHandle(&computePerPixel);
@@ -68,7 +113,6 @@ void initializePipeline(){
     config.primitiveType = TRIANGLES;
     config.clearColor = glm::vec3(0.5f,0.5f,0.5f);
     config.renderByIndex = true;
-
 
     pl.setConfig(config);
     pl.attachVertShader(vs);
@@ -84,7 +128,7 @@ int main()
     if (!glfwInit())
         return -1;
 
-    window = glfwCreateWindow(width, height, "soft renderer", NULL, NULL);
+    window = glfwCreateWindow(width, height, "soft-renderer", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -98,7 +142,7 @@ int main()
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
-//        pl.update();
+        //        pl.update();
         glDrawPixels(width,height,GL_RGB,GL_FLOAT,pl.getColorBuffer());
 
         /* Swap front and back buffers */

@@ -15,7 +15,7 @@ namespace GPUMemory {
 
 struct MemoryInfo{
     void * address;
-    int size;
+    size_t size;
     string type;
 };
 typedef map<string,MemoryInfo> DataMap;
@@ -23,7 +23,7 @@ typedef map<string,MemoryInfo> DataMap;
 extern DataMap Global_Data;
 
 template<class T>
-bool alloc(const string& name, const int & size,T *&pointer){
+bool alloc(const string& name, const size_t & size,T *&pointer){
     try{
         Global_Data.at(name);
         std::cerr << "Warning: alloc exist element! " << name << std::endl;
@@ -42,7 +42,7 @@ bool alloc(const string& name, const int & size,T *&pointer){
 }
 
 template<class T>
-bool alloc(const string& name, const int & size){
+bool alloc(const string& name, const size_t & size){
     try{
         Global_Data.at(name);
         std::cerr << "Warning: alloc exist element! " << name << std::endl;
@@ -79,7 +79,7 @@ void dealloc(const string& name)
 }
 
 template<class T>
-bool memoryCopy(const string &name, const int &size, T *in_data)
+bool memoryCopy(const string &name, const size_t &size, T *in_data)
 {
     try{
         MemoryInfo mem_info = Global_Data.at(name);
@@ -107,7 +107,7 @@ bool memoryCopy(const string &name, const int &size, T *in_data)
 }
 
 template<class T>
-bool retrieve(const std::string &name,int &size,T *&out_data)
+bool retrieve(const std::string &name,size_t &size,T *&out_data)
 {
     try{
         MemoryInfo mem_info = Global_Data.at(name);

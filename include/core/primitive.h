@@ -50,9 +50,9 @@ public:
 
 private:
     PointObject *verteices;
-    int   vertexCount;
+    size_t   vertexCount;
     int  *indexData;
-    int   indexSize;
+    size_t   indexSize;
 };
 
 #endif // PRIMITIVE_H

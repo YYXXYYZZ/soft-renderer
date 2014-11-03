@@ -1,7 +1,8 @@
+include_directories("${PROJECT_SOURCE_DIR}/include")
+include_directories("${GRAPHIC_SDK}/include")
+
 set(INCROOT ${PROJECT_SOURCE_DIR}/include/core)
 set(SRCROOT ${PROJECT_SOURCE_DIR}/src/core)
-
-include_directories(${PROJECT_SOURCE_DIR}/include)
 
 set(SRC
     ${INCROOT}/vertex.h
@@ -29,10 +30,16 @@ set(SRC
     ${SRCROOT}/fragshader.cpp
     ${INCROOT}/fragshader.h
     ${INCROOT}/constant.h
-    ${INCROOT}/helper.h
 )
-SET(BUILD_SHARED_LIBS ON)
 source_group("" FILES ${SRC})
 
-add_library(sf-core ${SRC})
-target_link_libraries(sf-core gomp)
+set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/build)
+
+add_library(sf-core-shared SHARED ${SRC})
+add_library(sf-core-static STATIC ${SRC})
+
+if(MSVC)
+else()
+    target_link_libraries(sf-core gomp)
+endif(MSVC)
+
